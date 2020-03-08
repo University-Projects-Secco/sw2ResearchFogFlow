@@ -1,0 +1,14 @@
+{
+  "name": "powerpanel",
+  "version": "1.0.0",
+  "description": "simulated powerpanel device in retail shops",
+  "author": "Bin Cheng<bin.cheng@neclab.eu>",
+  "main": "simulation.js",
+  "scripts": {
+    "start": "node simulation.js"
+  },
+  "dependencies": {
+    "axios": "*",
+    "loglevel": "^1.6.7"
+  }
+}
