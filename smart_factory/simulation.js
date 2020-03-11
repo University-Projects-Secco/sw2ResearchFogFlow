@@ -21,16 +21,12 @@ const cfgFile = args[0];
 const profile = JSON.parse(
     fs.readFileSync(cfgFile)
 );
-const simulationSettingsFile = args[1];
-const simulation = JSON.parse(
-    fs.readFileSync(simulationSettingsFile)
-);
-Robot.initClass(simulation);
+Robot.initClass(profile);
 
 let ngsi10client;
 let contextTimer;
 let clockTimer;
-let robot = new Robot();
+let robot = new Robot(null,profile.simulationParams);
 
 // find out the nearby IoT Broker according to my location
 const discovery = new NGSI.NGSI9Client(profile.discoveryURL);
@@ -45,11 +41,11 @@ discovery.findNearbyIoTBroker(profile.location, 1)
         // generating data observations periodically
         contextTimer = setInterval(function(){
             updateContext();
-        }, simulation.updateContextTime);
+        }, profile['updateContextTime']);
 
         clockTimer = setInterval(function () {
             robot.update();
-        },simulation.updateClockTime);
+        },profile['updateClockTime']);
 
         // register my device profile by sending a device update
         registerDevice();
@@ -61,46 +57,7 @@ discovery.findNearbyIoTBroker(profile.location, 1)
 // register device with its device profile
 function registerDevice() 
 {
-    const ctxObj = {};
-    ctxObj.entityId = {
-        id: 'Device.' + profile.type + '.' + profile.id,
-        type: profile.type,
-        isPattern: false
-    };
-    
-    ctxObj.attributes = {}; //OPT: move attributes definition into devices/robot.js
-
-    ctxObj.attributes.status = {
-        type: 'string',
-        value: robot.getStatus()
-    };
-
-    ctxObj.attributes.position = {
-        type: 'point',
-        value: robot.getPosition()
-    };
-
-    ctxObj.attributes.factory = {
-        type: 'string',
-        value: profile.id
-    };
-
-    ctxObj.attributes.iconURL = {
-        type: 'string',
-        value: profile.iconURL
-    };                   
-    
-    ctxObj.metadata = {};
-    
-    ctxObj.metadata.location = {
-        type: 'point',
-        value: simulation.factoryLocation
-    };
-
-    ctxObj.metadata.factory = {
-        type: 'string',
-        value: profile.id
-    };      
+    const ctxObj = robot.fillAttributes();
    
     ngsi10client.updateContext(ctxObj).then( function(data) {
         log.debug('ngsi response: '+JSON.stringify(data),null,' ');
@@ -112,25 +69,7 @@ function registerDevice()
 // update context for streams
 function updateContext()
 {
-    const ctxObj = {};
-
-    ctxObj.entityId = {
-        id: 'Device.' + profile.type + '.' + profile.id,
-        type: profile.type,
-        isPattern: false
-    };
-    
-    ctxObj.attributes = {}; //OPT: move attributes definition into devices/robot.js
-
-    ctxObj.attributes.status = {
-        type: 'string',
-        value: robot.getStatus()
-    };
-
-    ctxObj.attributes.position = {
-        type: 'point',
-        value: robot.getPosition()
-    };
+    const ctxObj = robot.fillAttributes();
 
     ngsi10client.updateContext(ctxObj).then( function(data) {
         log.debug('ngsi response: '+JSON.stringify(data),null,' ');
@@ -146,12 +85,7 @@ process.on('SIGINT', function()
         clearInterval(clockTimer);
         
         // to delete the device
-        const entity = {
-            id: 'Device.' + profile.type + '.' + profile.id,
-            type: 'Device',
-            isPattern: false
-        };
-        ngsi10client.deleteContext(entity).then( function(data) {
+        ngsi10client.deleteContext(robot.getAsEntity()).then( function(data) {
             log.debug('ngsi response: '+JSON.stringify(data,null,' '));
         }).catch(function(error) {
             log.warn('failed to delete context');
