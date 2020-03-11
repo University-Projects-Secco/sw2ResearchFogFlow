@@ -1,29 +1,39 @@
 const log = require('loglevel');
 
 class Robot {
-    constructor(initialStatus) {
-        if(!Robot.initialized) throw 'Class not initialized';
-        if(!initialStatus) initialStatus = 0;
+    constructor(initialStatus,simulation) {
+        if(!Robot.initialized)
+            Robot.initClass(simulation);
+        if(!initialStatus)
+            initialStatus = 0;
         switch (typeof initialStatus) {
             case "number": this.status = initialStatus; break;
             case "string": this.status = Robot.statusEnum[initialStatus]; break;
             default: throw 'Invalid constructor parameter';
         }
-        this.position = [Robot.simulation.factoryLocation.latitude, Robot.simulation.factoryLocation.longitude];
+        this.position = [this.profile.factoryLocation.latitude, this.profile.factoryLocation.longitude];
         this.jobProgression = 0;
+        this.id = Robot.nextId;
+        Robot.nextId++;
     };
 
-    static initClass(simulation){
+    static initClass(profile){
         Robot.statusEnum = Object.freeze({'idle':0,'working':1,'moving':2});
-        Robot.simulation = simulation;
+        Robot.prototype.profile = profile;
+        Robot.prototype.type = 'Robot';
+        Robot.nextId=0;
         Robot.initialized = true;
     }
 
+    //noinspection JSUnfilteredForInLoop
     getStatus(){
         for(let statusString in Robot.statusEnum)
+            //noinspection JSUnfilteredForInLoop
             if(Robot.statusEnum[statusString] === this.status)
+                //noinspection JSUnfilteredForInLoop
                 return statusString;
         throw 'Unexpected status index: '+this.status;
+
     }
 
     getPosition(){
@@ -35,28 +45,70 @@ class Robot {
 
     update(){
         switch (this.status) {
-            case Robot.statusEnum.moving: this.move(); break;
-            case Robot.statusEnum.idle: this.idle(); break;
-            case Robot.statusEnum.working: this.work(); break;
+            case Robot.statusEnum.moving: this.#move(); break;
+            case Robot.statusEnum.idle: this.#idle(); break;
+            case Robot.statusEnum.working: this.#work(); break;
         }
     }
 
-    updateStatus(){
-        this.jobProgression = 0;
-        const changeStatusProb = Robot.simulation.changeStatusProb;
-        if(Math.random()>changeStatusProb) {
+    //OPT: move to a superclass
+    fillAttributes(){
+        return {
+            entityId: this.getAsEntity(),
+            attributes: {
+                status: {
+                    type: 'string',
+                    value: this.getStatus()
+                },
+                position: {
+                    type: 'point',
+                    value: this.getPosition()
+                },
+                factory: {
+                    type: 'string',
+                    value: this.profile.id
+                },
+                iconURL: {
+                    type: 'string',
+                    value: this.profile.iconURL
+                }
+            },
+            metadata: {
+                location: {
+                    type: 'point',
+                    value: this.profile.location
+                },
+                factory: {
+                    type: 'string',
+                    value: this.profile.id
+                }
+            }
+        };
+    }
+
+
+    //OPT: move to a superclass
+    getAsEntity(){
+        return {
+            id: 'Device.' + this.type + '.' + this.id,
+                type: this.type,
+            isPattern: false
+        }
+    }
+
+    #updateStatus(){
+        if(Math.random()<this.profile[`changeStatusProb`]) {
             const keys = Object.keys(Robot.statusEnum);
             this.status = Robot.statusEnum[keys[Math.floor(Math.random() * keys.length)]];
+            log.info('Status changed to '+ this.getStatus())
         }
-
-        log.info('Status changed to '+ this.getStatus())
     }
 
-    move(){
+    #move(){
         const movingDirection = Math.floor(Math.random()*this.position.length);
-        const speed = Robot.simulation.robotParams.movingSpeed;
+        const speed = this.profile.robotParams.movingSpeed;
         let movingSign;
-        const sizes = Robot.simulation.factorySizes;
+        const sizes = this.profile.factorySizes;
 
         if(this.position[movingDirection] + speed > sizes[movingDirection]) movingSign = -1;
         else if(this.position[movingDirection] - speed < 0) movingSign = 1;
@@ -66,19 +118,20 @@ class Robot {
 
         log.info('Moved to ' + this.position);
 
-        this.updateStatus();
+        this.#updateStatus();
     }
 
-    work(){
-        this.jobProgression += Robot.simulation.robotParams.workingSpeed;
-        if(this.jobProgression >= Robot.simulation.robotParams.jobSize)
-            this.updateStatus();
-
+    #work(){
+        this.jobProgression += this.profile.robotParams.workingSpeed;
+        if(this.jobProgression >= this.profile.robotParams.jobSize) {
+            this.jobProgression = 0;
+            this.#updateStatus();
+        }
         log.info('Working progression: '+this.jobProgression);
     }
 
-    idle(){
-        this.updateStatus();
+    #idle(){
+        this.#updateStatus();
     }
 
 }
