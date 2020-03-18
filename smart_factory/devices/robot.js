@@ -81,6 +81,10 @@ class Robot {
                 factory: {
                     type: 'string',
                     value: this.profile.id
+                },
+                time: {
+                    type: 'number',
+                    value: Date.now()
                 }
             }
         };
@@ -91,7 +95,7 @@ class Robot {
     getAsEntity(){
         return {
             id: 'Device.' + this.type + '.' + this.id,
-                type: this.type,
+            type: this.type,
             isPattern: false
         }
     }
