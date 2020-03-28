@@ -1,0 +1,14 @@
+[ignore]
+<PROJECT_ROOT>/sh_scripts/*
+<PROJECT ROOT>/node_modules/*
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+module.name_mapper='^utils\/\(.*\)$'->'<PROJECT_ROOT>/utils/\1'
+module.name_mapper='^devices\/\(.*\)$'->'<PROJECT_ROOT>/devices/\1'
+
+[strict]

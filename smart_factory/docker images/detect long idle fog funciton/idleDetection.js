@@ -1,53 +1,69 @@
-const Robot = require('../../devices/robot.js');
+import Robot from 'devices/robots/Robot';
+
+import FogLogger from 'utils/FogFlow_Logger';
+
 exports.handler = function(robotUpdate, publish, query, subscribe) {
-    console.log("enter into the user-defined fog function");
 
-    const entityID = robotUpdate.entityId.id;
-    const status = robotUpdate.entityId.attributes.status;
+    const log = new FogLogger('idleDetection',publish);
 
-    if (robotUpdate.attributes == null ||
-        robotUpdate.attributes.entityId.type !== "Robot")
+    log.debug("enter into the user-defined fog function");
+    if (robotUpdate.entityId.type !== Robot.prototype.type)
         return;
 
-    //TODO: manage no previous time saved
-    //TODO: manage entering end exiting idle
+    const entityID = robotUpdate.entityId.id;
+    const status = robotUpdate.attributes.status.value;
+    const newTimestamp = robotUpdate.metadata.time.value;
+    const newData = {
+        entityID: {
+            id: 'Result.StatusPermanence.'+entityID,
+            type: 'data',
+            isPattern: false
+        },
+        attributes:{
+            status: {
+                type: 'string',
+                value: status
+            },
+            interval:{
+                type: 'number'
+            },
+            timestamp:{
+                type: 'number',
+                value: newTimestamp
+            }
+        }
+        //OPT: metadata
+    };
 
-    //Filter by factory
     const queryRequest = {
         entities: [
             {
-                type: 'Robot',
-                id: entityID}
+                type: 'data',
+                id: 'IdleTime'+entityID,
+                isPattern: false
+            }
         ]
     };
 
-    //Always one only
-    const updateIdleTime = function (idleTimeList) {
-        const previousTimeInIdle = idleTimeList[0];
-        const lastAbsoluteTime = previousTimeInIdle.attributes.time.value;
-        const newIdleTime = {
-            attributes:{
-                interval:{
-                    type: 'number',
-                    value: previousTimeInIdle.attributes.interval.value + (robotUpdate.metadata.time.value - lastAbsoluteTime)
-                },
-                time:{
-                    type: 'number',
-                    value: robotUpdate.metadata.time.value
-                }
-            }
-        };
-        //Delete old idle time in the framework
-        newIdleTime.entityID= {
-            id: 'IdleTime'+entityID,
-            type: 'result',
-            isPattern: false
-        };
-        //OPT: metadata
-        console.log("publish: ", newIdleTime);
-        publish(newIdleTime);
+    const sendUpdate = function(historicalDataList){
+        log.debug('query result: '+historicalDataList);
+        if(historicalDataList.length===0 ||
+            historicalDataList[0]===undefined ||
+            status !== historicalDataList[0].attributes.status.value)   //the stored item has a different status from the current one
+        {
+            newData.attributes.interval.value = 0;
+        } else {
+            const lastTimestamp = historicalDataList[0].attributes.timestamp.value;
+            const lastInterval = historicalDataList[0].attributes.interval.value;
+            newData.attributes.interval.value = lastInterval + (newTimestamp - lastTimestamp);    //Calculate new interval incrementally
+            //Check if the old version is deleted
+        }
+
+        log.debug("publish: ", newData);
+        publish(newData);
     };
 
-    query(queryRequest,updateIdleTime);
+    log.debug('query '+query);
+    query(queryRequest, sendUpdate);
 
 };
