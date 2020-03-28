@@ -1,0 +1,87 @@
+== Info:   Trying 192.168.1.137...
+== Info: TCP_NODELAY set
+== Info: Connected to 192.168.1.137 (192.168.1.137) port 8070 (#0)
+=> Send header, 179 bytes (0xb3)
+0000: POST /ngsi10/updateContext HTTP/1.1
+0025: Host: 192.168.1.137:8070
+003f: User-Agent: curl/7.58.0
+0058: Accept: */*
+0065: Content-Type: application/json
+0085: Content-Length: 3526
+009b: Expect: 100-continue
+00b1: 
+<= Recv header, 23 bytes (0x17)
+0000: HTTP/1.1 100 Continue
+=> Send data, 3526 bytes (0xdc6)
+0000: {   "contextElements": [      {         "entityId":{            
+0040: "id":"detect permanence in state",            "type":"Operator" 
+0080:         },         "attributes":[            {               "na
+00c0: me":"designboard",               "type":"object",               
+0100: "value":{                  "blocks":[                     {     
+0140:                    "id":1,                        "module":null,
+0180:                         "type":"Parameter",                     
+01c0:    "values":{                           "name":"service_port",  
+0200:                          "values":[                             
+0240:  "4041"                           ]                        },   
+0280:                      "x":-425,                        "y":-158  
+02c0:                    },                     {                     
+0300:    "id":2,                        "module":null,                
+0340:         "type":"Operator",                        "values":{    
+0380:                        "description":"",                        
+03c0:    "name":"detect permanence in state"                        },
+0400:                         "x":-186,                        "y":-69
+0440:                      }                  ],                  "edg
+0480: es":[                     {                        "block1":1,  
+04c0:                       "block2":2,                        "connec
+0500: tor1":[                           "parameter",                  
+0540:          "output"                        ],                     
+0580:    "connector2":[                           "parameters",       
+05c0:                     "input"                        ],           
+0600:              "id":1                     }                  ]    
+0640:            }            },            {               "name":"op
+0680: erator",               "type":"object",               "value":{ 
+06c0:                  "description":"",                  "name":"dete
+0700: ct permanence in state",                  "parameters":[        
+0740:              {                        "name":"service_port",    
+0780:                     "values":[                           "4041" 
+07c0:                        ]                     }                  
+0800: ]               }            }         ],         "domainMetadat
+0840: a":[            {               "name":"location",              
+0880:  "type":"global",               "value":"global"            }   
+08c0:       ]      },      {         "entityId":{            "id":"gal
+0900: axarum/measure_robot_status_time:latest",            "type":"Doc
+0940: kerImage"         },         "attributes":[            {        
+0980:        "name":"image",               "type":"string",           
+09c0:     "value":"galaxarum/measure_robot_status_time"            }, 
+0a00:            {               "name":"tag",               "type":"s
+0a40: tring",               "value":"latest"            },            
+0a80: {               "name":"hwType",               "type":"string", 
+0ac0:               "value":"X86"            },            {          
+0b00:      "name":"osType",               "type":"string",            
+0b40:    "value":"Linux"            },            {               "nam
+0b80: e":"operator",               "type":"string",               "val
+0bc0: ue":"detect permanence in state"            },            {     
+0c00:           "name":"prefetched",               "type":"boolean",  
+0c40:              "value":false            }         ],         "doma
+0c80: inMetadata":[            {               "name":"operator",     
+0cc0:           "type":"string",               "value":"detect permane
+0d00: nce in state"            },            {               "name":"l
+0d40: ocation",               "type":"global",               "value":"
+0d80: global"            }         ]      }   ],   "updateAction": "UP
+0dc0: DATE"}
+== Info: We are completely uploaded and fine
+<= Recv header, 17 bytes (0x11)
+0000: HTTP/1.1 200 OK
+<= Recv header, 47 bytes (0x2f)
+0000: Content-Type: application/json; charset=utf-8
+<= Recv header, 28 bytes (0x1c)
+0000: X-Powered-By: go-json-rest
+<= Recv header, 37 bytes (0x25)
+0000: Date: Sat, 28 Mar 2020 12:11:20 GMT
+<= Recv header, 20 bytes (0x14)
+0000: Content-Length: 25
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 25 bytes (0x19)
+0000: {"contextResponses":null}
+== Info: Connection #0 to host 192.168.1.137 left intact
