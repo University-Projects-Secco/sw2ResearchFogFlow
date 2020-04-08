@@ -1,45 +1,53 @@
 const log = require('loglevel');
 
 class Robot {
-    constructor(initialStatus,simulation) {
-        if(!Robot.initialized)
-            Robot.initClass(simulation);
-        if(!initialStatus)
-            initialStatus = 0;
+
+    profile = {
+        id: undefined,
+        iconURL: undefined,
+        factoryLocation: {
+            latitude: undefined,
+            longitude: undefined
+        },
+        factorySizes: [undefined,undefined],
+        robotParams:{
+            movingSpeed: undefined,
+            workingSpeed: undefined,
+            jobSize: undefined
+        }
+    }
+
+    jobProgression = 0;
+    id;
+    static statusEnum = Object.freeze({'idle':0,'working':1,'moving':2});
+    static nextId=0;
+
+    constructor(initialStatus) {
         switch (typeof initialStatus) {
             case "number": this.status = initialStatus; break;
             case "string": this.status = Robot.statusEnum[initialStatus]; break;
-            default: throw 'Invalid constructor parameter';
+            default: this.status = Robot.statusEnum.idle;
         }
         this.position = [this.profile.factoryLocation.latitude, this.profile.factoryLocation.longitude];
-        this.jobProgression = 0;
         this.id = Robot.nextId;
         Robot.nextId++;
     };
 
-    static initClass(profile){
-        Robot.statusEnum = Object.freeze({'idle':0,'working':1,'moving':2});
-        Robot.prototype.profile = profile;
-        Robot.prototype.type = 'Robot';
-        Robot.nextId=0;
-        Robot.initialized = true;
-    }
-
-    //noinspection JSUnfilteredForInLoop
     getStatus(){
         for(let statusString in Robot.statusEnum)
-            //noinspection JSUnfilteredForInLoop
+            // noinspection JSUnfilteredForInLoop
             if(Robot.statusEnum[statusString] === this.status)
-                //noinspection JSUnfilteredForInLoop
+                // noinspection JSUnfilteredForInLoop
                 return statusString;
+
         throw 'Unexpected status index: '+this.status;
 
     }
 
     getPosition(){
         return {
-            "latitude": this.position[0],
-            "longitude": this.position[1]
+            latitude: this.position[0],
+            longitude: this.position[1]
         }
     }
 
@@ -140,4 +148,6 @@ class Robot {
 
 }
 
+Robot.prototype.profile = profile;
+Robot.prototype.type = 'Robot';
 module.exports = Robot;

@@ -1,4 +1,3 @@
-const Robot = require('../../devices/robot.js');
 exports.handler = function(robotUpdate, publish, query, subscribe) {
     console.log("enter into the user-defined fog function");
 
