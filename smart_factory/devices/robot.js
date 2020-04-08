@@ -1,28 +1,16 @@
 const log = require('loglevel');
 
-class Robot {
-
-    profile = {
-        id: undefined,
-        iconURL: undefined,
-        factoryLocation: {
-            latitude: undefined,
-            longitude: undefined
-        },
-        factorySizes: [undefined,undefined],
-        robotParams:{
-            movingSpeed: undefined,
-            workingSpeed: undefined,
-            jobSize: undefined
-        }
-    }
+class Robot extends AbstractDevice {
 
     jobProgression = 0;
-    id;
     static statusEnum = Object.freeze({'idle':0,'working':1,'moving':2});
-    static nextId=0;
 
+    /**
+     *
+     * @param {statusEnum} initialStatus
+     */
     constructor(initialStatus) {
+        super();
         switch (typeof initialStatus) {
             case "number": this.status = initialStatus; break;
             case "string": this.status = Robot.statusEnum[initialStatus]; break;
@@ -51,62 +39,58 @@ class Robot {
         }
     }
 
-    update(){
+    update() {
         switch (this.status) {
-            case Robot.statusEnum.moving: this.#move(); break;
-            case Robot.statusEnum.idle: this.#idle(); break;
-            case Robot.statusEnum.working: this.#work(); break;
+            case Robot.statusEnum.moving:
+                this.#move();
+                break;
+            case Robot.statusEnum.idle:
+                this.#idle();
+                break;
+            case Robot.statusEnum.working:
+                this.#work();
+                break;
         }
     }
 
     //OPT: move to a superclass
-    fillAttributes(){
-        return {
-            entityId: this.getAsEntity(),
-            attributes: {
-                status: {
-                    type: 'string',
-                    value: this.getStatus()
-                },
-                position: {
-                    type: 'point',
-                    value: this.getPosition()
-                },
-                factory: {
-                    type: 'string',
-                    value: this.profile.id
-                },
-                iconURL: {
-                    type: 'string',
-                    value: this.profile.iconURL
-                }
+    fillAttributes() {
+        const attributes = super.fillAttributes();
+        attributes.attributes = {
+            status: {
+                type: 'string',
+                value: this.getStatus()
             },
-            metadata: {
-                location: {
-                    type: 'point',
-                    value: this.profile.location
-                },
-                factory: {
-                    type: 'string',
-                    value: this.profile.id
-                },
-                time: {
-                    type: 'number',
-                    value: Date.now()
-                }
+            position: {
+                type: 'point',
+                value: this.getPosition()
+            },
+            factory: {
+                type: 'string',
+                value: this.profile.id
+            },
+            iconURL: {
+                type: 'string',
+                value: this.profile.iconURL
+            }
+        }
+        attributes.metadata = {
+            location: {
+                type: 'point',
+                value: this.profile.location
+            },
+            factory: {
+                type: 'string',
+                value: this.profile.id
+            },
+            time: {
+                type: 'number',
+                value: Date.now()
             }
         };
+        return attributes;
     }
 
-
-    //OPT: move to a superclass
-    getAsEntity(){
-        return {
-            id: 'Device.' + this.type + '.' + this.id,
-            type: this.type,
-            isPattern: false
-        }
-    }
 
     #updateStatus(){
         if(Math.random()<this.profile[`changeStatusProb`]) {
@@ -148,6 +132,20 @@ class Robot {
 
 }
 
-Robot.prototype.profile = profile;
-Robot.prototype.type = 'Robot';
+Robot.prototype.profile = {
+    id: undefined,
+    iconURL: undefined,
+    factoryLocation: {
+        latitude: undefined,
+        longitude: undefined
+    },
+    factorySizes: [undefined,undefined],
+    robotParams:{
+        movingSpeed: undefined,
+        workingSpeed: undefined,
+        jobSize: undefined
+    }
+};
+
+Object.defineProperty(Robot.prototype,'type',{value: 'Robot', writable: false})
 module.exports = Robot;
