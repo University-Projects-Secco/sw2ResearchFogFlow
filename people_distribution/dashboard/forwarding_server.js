@@ -20,6 +20,7 @@ app.post('/ngsi10/updateContext', (req, res) => {
 
 io.on("connection", socket => {
     socket.on("register", data => {
+        console.log('Registering EBoard.' + data.id);
         axios({
             method: 'post',
             url: BROKER_URL + '/NGSI9/registerContext',

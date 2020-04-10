@@ -466,19 +466,20 @@ public class RestHandler {
         ContextAttribute attr = new ContextAttribute();
         attr.name = "next";
         attr.type = "command";
-        attr.value = new Random().nextInt(100);
+        attr.value = Integer.toString(new Random().nextInt(100));
 
         resultEntity.attributes.put("next", attr);
 
         publishResult(resultEntity, true);
 
+        resultEntity = new ContextObject();
+        resultEntity.id = entity.id.replace("PeopleCounter", "EBoard");
         resultEntity.type = "Result";
-        resultEntity.attributes.clear();
 
         attr = new ContextAttribute();
         attr.name = "next";
         attr.type = "string";
-        attr.value = new Random().nextInt(100);
+        attr.value = Integer.toString(new Random().nextInt(100));
 
         resultEntity.attributes.put("next", attr);
 

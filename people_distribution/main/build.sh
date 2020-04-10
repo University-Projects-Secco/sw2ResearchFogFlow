@@ -1,6 +1,5 @@
 cd ..
-cd broker && ./build.sh
+cd broker && ./build.sh && cd ..
 cd angular-dashboard && npm install && cd ..
-cd context_consumer && npm install && cd ..
-cd context_producer && npm install && cd ..
-cd fog_function && ./build.sh
+cd fog_function && ./build.sh && cd ..
+cd main || exit

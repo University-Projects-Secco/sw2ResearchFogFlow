@@ -16,7 +16,7 @@ const BROKER_URL = 'http://192.168.1.4:8070';
 export class AppComponent implements OnInit, OnDestroy {
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
-    counterNumber = 10;
+    counterNumber = 1;
     displayedColumns: string[] = ['name', 'affluence', 'next', 'control'];
     dataSource = new MatTableDataSource<PeopleCounter>([]);
     destroyed = new Subject();
@@ -25,12 +25,12 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.sliderValueChanged();
         this.dataSource.paginator = this.paginator;
         const source = timer(0, 10000);
         source.pipe(takeUntil(this.destroyed)).subscribe(() => {
             this.dataSource.data.filter(element => element.random).forEach(element => {
-                const counter = this.dataSource.data[element.name.replace('PeopleCounter.', '')];
+                const i = element.name.replace('PeopleCounter.', '');
+                const counter = this.dataSource.data[i];
                 const affluence = Math.floor(Math.random() * 100);
                 const male = Math.floor(Math.random() * affluence);
                 counter.affluence = {male, female: affluence - male};
@@ -44,6 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 .nextCounter = data.next;
             this.dataSource._updateChangeSubscription();
         });
+        this.sliderValueChanged();
     }
 
     sliderValueChanged() {
@@ -53,8 +54,8 @@ export class AppComponent implements OnInit, OnDestroy {
                 const male = Math.floor(Math.random() * affluence);
                 const counter = new PeopleCounter(i, male, affluence - male, Math.random(), Math.random());
                 this.dataSource.data.push(counter);
-                this.updateCounter(counter);
                 this.registerBoard(i);
+                this.updateCounter(counter);
             }
         } else {
             for (let i = this.dataSource.data.length; i > this.counterNumber; i--) {

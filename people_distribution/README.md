@@ -1,9 +1,38 @@
-## How to build each FogFlow component
+## People distribution using FogFlow
+### How to build & run
+#### Requirements
+* node
+* angular
+* docker
+* docker-compose
+* curl
 
-A bash script is provided to build this docker image. 
+If you want to modify the fog function:
+* maven
+* account on docker hub
 
+#### Run
+Run inside main folder:
 ```console
-./build.sh
+./start.sh
 ```
+You can then find FogFlow [here][1].
 
-Two docker images will be generated: one for Ubuntu Linux and the other for ARM-based raspberry pi
+You can then find Grafana [here][2] (data visualization tool).
+
+Wait 15 secs.
+
+Run inside dashboard folder:
+```console
+npm run start_dashboard
+npm run start_server
+```
+You can then find the dashboard [here][3].
+
+[1]: http://localhost
+[2]: http://localhost:3000
+[3]: http://localhost:4200
+
+#### Docs
+
+Inside docs folder.

@@ -63,7 +63,7 @@
         {
           "name": "prefetched",
           "type": "boolean",
-          "value": true
+          "value": false
         }
       ],
       "domainMetadata": [
