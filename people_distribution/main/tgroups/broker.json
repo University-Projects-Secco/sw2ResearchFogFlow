@@ -1,0 +1,10 @@
+[
+  {
+    "targets": [
+      "192.168.1.4:8070"
+    ],
+    "labels": {
+      "job": "fogflow_broker"
+    }
+  }
+]

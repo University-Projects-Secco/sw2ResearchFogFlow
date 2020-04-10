@@ -1,46 +1,30 @@
-\documentclass[11pt]{article}
-\usepackage[a4paper, total={6in, 9.5in}]{geometry}
-\usepackage[natbibapa]{apacite}
-\usepackage[english]{babel}
+\documentclass[conference]{ieeeconf}
+
 \usepackage[utf8]{inputenc}
-\usepackage{pythonhighlight}
-\usepackage{subcaption}
-\usepackage{hyperref}
-\usepackage{setspace}
-\usepackage{setspace}
-\usepackage{palatino}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{biblatex}
 \usepackage{graphicx}
-\usepackage{multirow}
-\usepackage{titling}
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{lscape}
-\usepackage{float}
 
-\fontfamily{ppl}\selectfont 
-\renewcommand{\baselinestretch}{1.5} 
-\bibliographystyle{apacite}
-\onehalfspacing
-\setlength{\droptitle}{-5em}
-
-\title{Prevent overcrowding in exhibitions using FogFlow to distribute people}
-
-\author{Lorenzo Siega\\
-    \href{mailto:lorenzo.siega@mail.polimi.it}{\texttt{lorenzo.siega@mail.polimi.it}}
+\title{\LARGE \bf
+Prevent overcrowding in exhibitions using FogFlow to distribute people
 }
 
-\date{\today}
+\author{\IEEEauthorblockN{Lorenzo Siega Battel}
+\IEEEauthorblockA{lorenzo.siega@mail.polimi.it}}
 
-\begin{document} {
-    \setstretch{.8}
-    \maketitle
-    
-    \begin{abstract}
-    The organizers of an exhibition with several booths are trying to avoid overcrowded booths so visitors could be distributed smoothly and enjoy the exhibition. They mount cameras at each booth so to know the number of people currently at each booth.\\
-    Each booth has an electrical board which, based on the information from other booths their distance, suggests visitors the closest booth to visit next in a way that the population is smoothly distributed.\\
-    The overall number of visitors of each booth is reported to the cloud for information aggregation to be queried for the crowded time of the day.
-    \end{abstract}
-}
+\addbibresource{main.bib}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begin{abstract}
+
+The organizers of an exhibition with several booths are trying to avoid overcrowded booths so visitors could be distributed smoothly and enjoy the exhibition. They mount cameras at each booth so to know the number of people currently at each booth. Each booth has an electrical board which, based on the information from other booths their distance, suggests visitors the closest booth to visit next in a way that the population is smoothly distributed. The overall number of visitors of each booth is reported to the cloud for information aggregation to be queried for the crowded time of the day.
+
+\end{abstract}
 
 \section{Introduction}
 During an exhibition with several booths people can stop in front of a booth and create a congestion. By providing them informations about the next more suitable booth to visit, we can distribute them more efficiently.\\
@@ -62,16 +46,16 @@ FogFlow can address to both problems, by filling these gaps:\\
 \cite{cheng2019fog}
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{Images/systemview.png}
+    \includegraphics[width=0.4\textwidth]{Images/systemview.png}
     \caption{System view}
 \end{figure}{}
 
 \section{Context producers vs. context consumers}
 At each booth will be deployed:
-rapberry pi as broker/context-producer/context-comsumer
+rapberry pi as broker/context-producer/context-consumer
 one or more cameras.
 
-\begin{python}
+\begin{lstlisting}[language=Python]
 import openface
 
 align = openface.AlignDlib('/root/openface/models/dlib/shape_predictor_68_face_landmarks.dat')
@@ -110,7 +94,7 @@ def publishResult((result):
     updateContext(resultCtxObj)
     
 publishResult(faceCounting(image))
-\end{python}
+\end{lstlisting}
 
 \begin{figure}[h]
     \centering
@@ -149,8 +133,13 @@ Geoscope: is a defined geographical area where input streams should be selected.
     \includegraphics[width=0.7\textwidth]{Images/function-orchestration.png}
     \caption{System view}
 \end{figure}{}
+\section{Data querying and visualization}
+
+
 \section{Distribution fog function design}
+
+
 \section{Testing}
 
-\bibliography{main}
+\printbibliography
 \end{document}
