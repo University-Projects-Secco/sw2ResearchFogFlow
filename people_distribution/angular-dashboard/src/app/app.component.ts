@@ -4,16 +4,15 @@ import {MatTableDataSource} from '@angular/material/table';
 import {HttpClient} from '@angular/common/http';
 import {Subject, timer} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
+import {Socket} from 'ngx-socket-io';
 
-// import express from 'express';
-// const app = express();
+const BROKER_URL = 'http://192.168.1.4:8070';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-
 export class AppComponent implements OnInit, OnDestroy {
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
@@ -22,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
     dataSource = new MatTableDataSource<PeopleCounter>([]);
     destroyed = new Subject();
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private socket: Socket) {
     }
 
     ngOnInit() {
@@ -39,14 +38,12 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.updateCounter(counter);
             });
         });
-        // app.use(express.json());
-        // app.listen(7000, () => console.log('App now running on port', 7000));
-        /* app.post('/ngsi10/updateContext', (req, res) => {
-            for (const contextElement of req.body.contextElements) {
-                console.log('next booth for ' + contextElement.id + ': ' + contextElement.attributes[0].value);
-            }
-            res.send({ contextResponses: null });
-        });*/
+        this.socket.fromEvent('message').pipe(takeUntil(this.destroyed)).subscribe((data: { id: string, next: string }) => {
+            this.dataSource.data
+                .filter(el => el.name.includes(data.id.replace('EBoard.', '')))[0]
+                .nextCounter = data.next;
+            this.dataSource._updateChangeSubscription();
+        });
     }
 
     sliderValueChanged() {
@@ -79,29 +76,13 @@ export class AppComponent implements OnInit, OnDestroy {
             contextElements: [counter.getEntity()],
             updateAction: 'UPDATE'
         };
-        this.http.post('http://localhost:8070/ngsi10' + '/updateContext', updateCtxReq).subscribe(data => {
+        this.http.post(BROKER_URL + '/ngsi10/updateContext', updateCtxReq).subscribe(data => {
             console.log(data);
         });
     }
 
     registerBoard(i) {
-        this.http.post('http://localhost:8070/NGSI9/registerContext', {
-            contextRegistrations: [
-                {
-                    entities: [{
-                        type: 'EBoard',
-                        isPattern: 'false',
-                        id: 'EBoard.' + i
-                    }],
-                    attributes: [{
-                        name: 'show',
-                        type: 'command'
-                    }],
-                    providingApplication: 'http://192.168.1.4:7000'
-                }]
-        }, {headers: {'fiware-service': 'openiot', 'fiware-servicepath': '/'}}).subscribe(data => {
-            console.log(data);
-        });
+        this.socket.emit('register', {id: i});
     }
 
     randomizeAll() {
@@ -168,17 +149,5 @@ export class PeopleCounter {
                 value: Date.now()
             }]
         };
-    }
-
-    publish(url, http: HttpClient) {
-
-
-        /*.then((response) => {
-            if (response.status === 200) {
-                return response.data;
-            } else {
-                return null;
-            }
-        });*/
     }
 }

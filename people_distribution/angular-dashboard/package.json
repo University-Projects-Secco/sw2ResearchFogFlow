@@ -3,7 +3,8 @@
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
+        "start_dashboard": "ng serve",
+        "start_server": "node forwarding_server.js",
         "build": "ng build",
         "test": "ng test",
         "lint": "ng lint",
@@ -21,7 +22,9 @@
         "@angular/platform-browser": "~9.1.0",
         "@angular/platform-browser-dynamic": "~9.1.0",
         "@angular/router": "~9.1.0",
+        "axios": "^0.19.2",
         "express": "^4.17.1",
+        "ngx-socket-io": "^3.0.1",
         "rxjs": "^6.5.5",
         "tslib": "^1.10.0",
         "zone.js": "~0.10.2"

@@ -11,7 +11,10 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {FormsModule} from '@angular/forms';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatButtonModule} from "@angular/material/button";
+import {MatButtonModule} from '@angular/material/button';
+import {SocketIoModule} from 'ngx-socket-io';
+
+const SOCKET_URL = 'http://localhost:7001';
 
 @NgModule({
     declarations: [
@@ -28,7 +31,8 @@ import {MatButtonModule} from "@angular/material/button";
         MatPaginatorModule,
         HttpClientModule,
         MatSlideToggleModule,
-        MatButtonModule
+        MatButtonModule,
+        SocketIoModule.forRoot({url: SOCKET_URL, options: {}})
     ],
     providers: [],
     bootstrap: [AppComponent]

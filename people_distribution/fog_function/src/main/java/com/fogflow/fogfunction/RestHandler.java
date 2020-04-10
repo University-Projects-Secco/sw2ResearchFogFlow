@@ -8,7 +8,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -403,7 +406,7 @@ public class RestHandler {
 
     @PostMapping("/admin")
     public ResponseEntity<Void> handleConfig(@RequestBody List<Config> configs) {
-        for(Config cfg : configs) {
+        for (Config cfg : configs) {
             System.out.println(cfg.details.get("command"));
             if (cfg.details.get("command").equalsIgnoreCase("CONNECT_BROKER") == true) {
                 this.BrokerURL = cfg.details.get("brokerURL");
@@ -413,9 +416,9 @@ public class RestHandler {
             }
         }
 
-        System.out.println(this.BrokerURL.toString());
-        System.out.println(this.outputEntityId.toString());
-        System.out.println(this.outputEntityType.toString());
+        System.out.println(this.BrokerURL);
+        System.out.println(this.outputEntityId);
+        System.out.println(this.outputEntityType);
 
         return ResponseEntity.ok().build();
     }
@@ -463,11 +466,23 @@ public class RestHandler {
         ContextAttribute attr = new ContextAttribute();
         attr.name = "next";
         attr.type = "command";
-        attr.value = entity.id;
+        attr.value = new Random().nextInt(100);
 
         resultEntity.attributes.put("next", attr);
 
         publishResult(resultEntity, true);
+
+        resultEntity.type = "Result";
+        resultEntity.attributes.clear();
+
+        attr = new ContextAttribute();
+        attr.name = "next";
+        attr.type = "string";
+        attr.value = new Random().nextInt(100);
+
+        resultEntity.attributes.put("next", attr);
+
+        publishResult(resultEntity, false);
     }
 
 
