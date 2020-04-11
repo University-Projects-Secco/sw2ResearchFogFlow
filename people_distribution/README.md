@@ -1,5 +1,5 @@
 ## People distribution using FogFlow
-### How to build & run
+### How to run
 #### Requirements
 * node
 * angular
