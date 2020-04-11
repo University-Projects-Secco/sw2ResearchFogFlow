@@ -4,7 +4,9 @@ const axios = require('axios');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const BROKER_URL = 'http://192.168.1.4:8070';
+//TODO: set your ip
+const BROKER_URL = 'http://localhost:8070';
+const PROVIDING_APPLICATION = 'http://192.168.1.4:7000'
 
 app.use(express.json());
 app.post('/ngsi10/updateContext', (req, res) => {
@@ -13,7 +15,7 @@ app.post('/ngsi10/updateContext', (req, res) => {
             id: contextElement.id,
             next: contextElement.attributes[0].value
         })
-        console.log("next booth for " + contextElement.id + ": " + contextElement.attributes[0].value);
+        console.log("next location for " + contextElement.id + ": " + contextElement.attributes[0].value);
     }
     res.send({contextResponses: null})
 });
@@ -37,7 +39,7 @@ io.on("connection", socket => {
                             name: 'show',
                             type: 'command'
                         }],
-                        providingApplication: 'http://192.168.1.4:7000'
+                        providingApplication: PROVIDING_APPLICATION
                     }]
             }
         }).then(response => {

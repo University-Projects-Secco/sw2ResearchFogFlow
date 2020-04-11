@@ -2,6 +2,5 @@ scrape_configs:
   - job_name: prometheus
     scrape_interval: 2s
     metrics_path: /prom/entity
-    file_sd_configs:
-      - files:
-          - 'tgroups/*.json'
+    static_configs:
+      - targets: ['192.168.1.4:8070'] #TODO: set your ip

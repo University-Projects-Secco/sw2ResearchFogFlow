@@ -43,6 +43,7 @@ class StatusCode {
     public int getCode() {
         return code;
     }
+
     public void setCode(int code) {
         this.code = code;
     }
@@ -50,6 +51,7 @@ class StatusCode {
     public String getReasonPhrase() {
         return reasonPhrase;
     }
+
     public void setReasonPhrase(String reasonPhrase) {
         this.reasonPhrase = reasonPhrase;
     }
@@ -57,6 +59,7 @@ class StatusCode {
     public String getDetails() {
         return details;
     }
+
     public void setDetailsn(String details) {
         this.details = details;
     }
@@ -74,6 +77,7 @@ class EntityId {
     public String getId() {
         return id;
     }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -81,6 +85,7 @@ class EntityId {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -88,6 +93,7 @@ class EntityId {
     public boolean getIsPattern() {
         return isPattern;
     }
+
     public void setIsPattern(boolean isPattern) {
         this.isPattern = isPattern;
     }
@@ -105,6 +111,7 @@ class ContextMetadata {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -112,6 +119,7 @@ class ContextMetadata {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -119,6 +127,7 @@ class ContextMetadata {
     public Object getValue() {
         return value;
     }
+
     public void setValue(Object value) {
         this.value = value;
     }
@@ -139,6 +148,7 @@ class ContextAttribute {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -146,6 +156,7 @@ class ContextAttribute {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
         this.type = type;
     }
@@ -153,6 +164,7 @@ class ContextAttribute {
     public Object getValue() {
         return value;
     }
+
     public void setValue(Object value) {
         this.value = value;
     }
@@ -197,11 +209,11 @@ class ContextElement {
         attributes = new ArrayList<>();
         domainMetadata = new ArrayList<>();
 
-        for (Map.Entry<String,ContextAttribute> entry : obj.attributes.entrySet()) {
+        for (Map.Entry<String, ContextAttribute> entry : obj.attributes.entrySet()) {
             attributes.add(entry.getValue());
         }
 
-        for (Map.Entry<String,ContextMetadata> entry : obj.domainMetadata.entrySet()) {
+        for (Map.Entry<String, ContextMetadata> entry : obj.domainMetadata.entrySet()) {
             domainMetadata.add(entry.getValue());
         }
     }
@@ -236,8 +248,8 @@ class ContextElement {
 }
 
 class ContextElementResponse {
-    public ContextElement  contextElement;
-    public StatusCode  statusCode;
+    public ContextElement contextElement;
+    public StatusCode statusCode;
 
     public ContextElementResponse() {
 
@@ -315,12 +327,12 @@ class ContextObject {
         id = element.entityId.id;
         type = element.entityId.type;
 
-        for(ContextAttribute attr : element.attributes) {
-            attributes.put(attr.name,  attr);
+        for (ContextAttribute attr : element.attributes) {
+            attributes.put(attr.name, attr);
         }
 
-        for(ContextMetadata meta : element.domainMetadata) {
-            domainMetadata.put(meta.name,  meta);
+        for (ContextMetadata meta : element.domainMetadata) {
+            domainMetadata.put(meta.name, meta);
         }
     }
 }
@@ -363,7 +375,7 @@ class UpdateContextRequest {
 
 class UpdateContextResponse {
     List<ContextElementResponse> contextResponses;
-    StatusCode   errorCode;
+    StatusCode errorCode;
 
     public UpdateContextResponse() {
         contextResponses = new ArrayList<ContextElementResponse>();
@@ -424,11 +436,12 @@ public class RestHandler {
     }
 
 
-    public void handleInitAdminCfg(String config)  {
+    public void handleInitAdminCfg(String config) {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            List<Config> myAdminCfgs =  mapper.readValue(config, new TypeReference<List<Config>>(){});
+            List<Config> myAdminCfgs = mapper.readValue(config, new TypeReference<List<Config>>() {
+            });
             this.handleConfig(myAdminCfgs);
         } catch (JsonGenerationException e) {
             e.printStackTrace();
@@ -440,10 +453,10 @@ public class RestHandler {
     }
 
     @PostMapping("/notifyContext")
-    public ResponseEntity<Void> handleNotify(@RequestBody  Notification notify) {
+    public ResponseEntity<Void> handleNotify(@RequestBody Notification notify) {
         System.out.println(notify.subscriptionId);
 
-        for(ContextElementResponse response : notify.contextResponses) {
+        for (ContextElementResponse response : notify.contextResponses) {
             System.out.println(response.toString());
             if (response.statusCode.code == 200) {
                 ContextObject contextObj = new ContextObject(response.contextElement);
@@ -528,10 +541,7 @@ public class RestHandler {
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-
-
-
-        }catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

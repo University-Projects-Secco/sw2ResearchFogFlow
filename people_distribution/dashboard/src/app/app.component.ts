@@ -6,7 +6,8 @@ import {Subject, timer} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {Socket} from 'ngx-socket-io';
 
-const BROKER_URL = 'http://192.168.1.4:8070';
+// TODO: set your ip
+const BROKER_URL = 'http://localhost:8070';
 
 @Component({
     selector: 'app-root',

@@ -2,7 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/people_distribution/go/src/github.com/ant0ine/go-json-rest" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/people_distribution/go/src/github.com/smartfog/fogflow" vcs="Git" />
   </component>
 </project>

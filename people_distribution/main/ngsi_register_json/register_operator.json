@@ -14,32 +14,6 @@
               {
                 "id": 1,
                 "module": null,
-                "type": "Parameter",
-                "values": {
-                  "name": "myport",
-                  "values": [
-                    "8080"
-                  ]
-                },
-                "x": -425,
-                "y": -158
-              },
-              {
-                "id": 2,
-                "module": null,
-                "type": "Parameter",
-                "values": {
-                  "name": "service_port",
-                  "values": [
-                    "8080"
-                  ]
-                },
-                "x": -393,
-                "y": -51
-              },
-              {
-                "id": 3,
-                "module": null,
                 "type": "Operator",
                 "values": {
                   "description": "",
@@ -49,34 +23,7 @@
                 "y": -69
               }
             ],
-            "edges": [
-              {
-                "block1": 2,
-                "block2": 3,
-                "connector1": [
-                  "parameter",
-                  "output"
-                ],
-                "connector2": [
-                  "parameters",
-                  "input"
-                ],
-                "id": 1
-              },
-              {
-                "block1": 1,
-                "block2": 3,
-                "connector1": [
-                  "parameter",
-                  "output"
-                ],
-                "connector2": [
-                  "parameters",
-                  "input"
-                ],
-                "id": 2
-              }
-            ]
+            "edges": []
           }
         },
         {
@@ -85,20 +32,7 @@
           "value": {
             "description": "",
             "name": "peoplecounter",
-            "parameters": [
-              {
-                "name": "service_port",
-                "values": [
-                  "7896"
-                ]
-              },
-              {
-                "name": "service_port",
-                "values": [
-                  "4041"
-                ]
-              }
-            ]
+            "parameters": []
           }
         }
       ],

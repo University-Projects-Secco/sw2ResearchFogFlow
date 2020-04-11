@@ -14,6 +14,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatButtonModule} from '@angular/material/button';
 import {SocketIoModule} from 'ngx-socket-io';
 
+// TODO: set your ip
 const SOCKET_URL = 'http://localhost:7001';
 
 @NgModule({

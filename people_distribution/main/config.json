@@ -3,8 +3,8 @@
   "external_hostip": "192.168.1.4",
   "internal_hostip": "host.docker.internal",
   "physical_location": {
-    "longitude": 139.709059,
-    "latitude": 35.692221
+    "longitude": 9.226341,
+    "latitude": 45.478134
   },
   "site_id": "001",
   "logging": {
