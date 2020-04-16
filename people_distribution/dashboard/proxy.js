@@ -4,8 +4,8 @@ const axios = require('axios');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-//TODO: set your ip
 const BROKER_URL = 'http://localhost:8070';
+//TODO: set your ip
 const PROVIDING_APPLICATION = 'http://192.168.1.4:7000'
 
 app.use(express.json());
@@ -44,10 +44,10 @@ io.on("connection", socket => {
             }
         }).then(response => {
             if (response.status !== 200) {
-                console.log("error registering EBoard " + data.id);
+                console.log("Error registering EBoard " + data.id);
             }
         }).catch(err => {
-            console.log("error registering EBoard " + data.id);
+            console.log("Error registering EBoard " + data.id);
         });
     });
 });
