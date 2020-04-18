@@ -21,6 +21,7 @@ if(robot_profile){
     Robot.prototype.profile = fact_profile;
     Robot.prototype.profile.robotParams = robot_profile;
 }
+sim_profile.location = fact_profile.location;
 
 let ngsi10client;
 let contextTimer;
