@@ -1,20 +1,19 @@
-'use strict';
-
 const NGSI = require('./ngsi/ngsiclient.js');
 const fs = require('fs');
-const Robot = require('./devices/robot.js');
-const log = require('loglevel');
-log.setLevel("INFO");
+const Robot = require('./devices/robots/Robot.js');
+const detector = require('./docker images/detect long idle fog funciton/idleDetection');
+const FogLogger = require('./utils/FogFlow_Logger');
+let published;
+
+let log = require('loglevel');
+
+log.setLevel("debug",false);
 
 // read device profile from the configuration file
 const args = process.argv.slice(2);
 if(args.length < 1){
     log.error('please specify the device profile');
-    return;
-}
-if(args.length<2){
-    log.error('please specify the simulation parameters');
-    return;
+    throw 'please specify the device profile';
 }
 
 const cfgFile = args[0];
@@ -36,6 +35,11 @@ discovery.findNearbyIoTBroker(profile.location, 1)
     log.info('------------end-----------');
     if(brokers && brokers.length > 0) {
         ngsi10client = new NGSI.NGSI10Client(brokers[0]);
+
+        let newLog = new FogLogger('simulation',ngsi10client.updateContext);
+        newLog.setDefaultLevel(log.getLevel());
+        newLog.setLevel(log.getLevel());
+        log = newLog;
 
         // generating data observations periodically
         contextTimer = setInterval(function(){
@@ -69,12 +73,15 @@ function registerDevice()
 function updateContext()
 {
     const ctxObj = robot.fillAttributes();
+    log.debug('update: '+JSON.stringify(ctxObj,null,'\t'));
 
     ngsi10client.updateContext(ctxObj).then( function(data) {
         log.debug('ngsi response: '+JSON.stringify(data),null,' ');
     }).catch(function(error) {
         log.warn('failed to update context');
-    });    
+    });
+
+    detector.handler(ctxObj,(data,save)=> save?published = data:log.info('data not persisted'),(data,func)=> func([published]))
 }
 
 process.on('SIGINT', function() 
