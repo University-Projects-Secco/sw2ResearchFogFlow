@@ -1,8 +1,6 @@
 const NGSI = require('./ngsi/ngsiclient.js');
 const fs = require('fs');
-const Robot = require('./devices/robots/Robot.js');
-const detector = require('./docker images/detect long idle fog funciton/idleDetection');
-const FogLogger = require('./utils/FogFlow_Logger');
+const Robot = require('./devices/robot.js');
 let published;
 
 let log = require('loglevel');
