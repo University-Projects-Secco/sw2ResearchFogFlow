@@ -77,8 +77,6 @@ function updateContext()
     }).catch(function(error) {
         log.warn('failed to update context');
     });
-
-    detector.handler(ctxObj,(data,save)=> save?published = data:log.info('data not persisted'),(data,func)=> func([published]))
 }
 
 process.on('SIGINT', function() 
