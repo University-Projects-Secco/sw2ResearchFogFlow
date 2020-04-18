@@ -21,12 +21,11 @@ const cfgFile = args[0];
 const profile = JSON.parse(
     fs.readFileSync(cfgFile)
 );
-Robot.initClass(profile);
 
 let ngsi10client;
 let contextTimer;
 let clockTimer;
-let robot = new Robot(null,profile.simulationParams);
+let robot = new Robot(Robot.statusEnum.idle);
 
 // find out the nearby IoT Broker according to my location
 const discovery = new NGSI.NGSI9Client(profile.discoveryURL);
@@ -91,10 +90,5 @@ process.on('SIGINT', function()
             log.warn('failed to delete context');
         });        
 
-        ngsi10client.deleteContext(entity).then( function(data) {
-            log.debug('ngsi response: '+JSON.stringify(data,null,' '));
-        }).catch(function(error) {
-            log.warn('failed to delete context');
-        });        
     }
 });
