@@ -3,7 +3,7 @@ const fs = require('fs');
 const Robot = require('./devices/robot.js');
 let published;
 
-let log = require('loglevel');
+const log = require('loglevel');
 
 log.setLevel("debug",false);
 
@@ -37,11 +37,6 @@ discovery.findNearbyIoTBroker(sim_profile.location, 1)
     log.info('------------end-----------');
     if(brokers && brokers.length > 0) {
         ngsi10client = new NGSI.NGSI10Client(brokers[0]);
-
-        let newLog = new FogLogger('simulation',ngsi10client.updateContext);
-        newLog.setDefaultLevel(log.getLevel());
-        newLog.setLevel(log.getLevel());
-        log = newLog;
 
         // generating data observations periodically
         contextTimer = setInterval(function(){
