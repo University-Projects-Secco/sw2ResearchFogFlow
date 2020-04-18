@@ -14,10 +14,13 @@ if(args.length < 1){
     throw 'please specify the device profile';
 }
 
-const cfgFile = args[0];
-const profile = JSON.parse(
-    fs.readFileSync(cfgFile)
-);
+const sim_profile = JSON.parse(fs.readFileSync(args[0]));
+const fact_profile = JSON.parse(fs.readFileSync(args[1]));
+const robot_profile = JSON.parse(fs.readFileSync(args[2]));
+if(robot_profile){
+    Robot.prototype.profile = fact_profile;
+    Robot.prototype.profile.robotParams = robot_profile;
+}
 
 let ngsi10client;
 let contextTimer;
@@ -25,8 +28,8 @@ let clockTimer;
 let robot = new Robot(Robot.statusEnum.idle);
 
 // find out the nearby IoT Broker according to my location
-const discovery = new NGSI.NGSI9Client(profile.discoveryURL);
-discovery.findNearbyIoTBroker(profile.location, 1)
+const discovery = new NGSI.NGSI9Client(sim_profile.discoveryURL);
+discovery.findNearbyIoTBroker(sim_profile.location, 1)
     .then( function(brokers) {
     log.info('-------nearbybroker----------');
     log.info(brokers);
@@ -42,11 +45,11 @@ discovery.findNearbyIoTBroker(profile.location, 1)
         // generating data observations periodically
         contextTimer = setInterval(function(){
             updateContext();
-        }, profile['updateContextTime']);
+        }, sim_profile['updateContextTime']);
 
         clockTimer = setInterval(function () {
             robot.update();
-        },profile['updateClockTime']);
+        },sim_profile['updateClockTime']);
 
         // register my device profile by sending a device update
         registerDevice();

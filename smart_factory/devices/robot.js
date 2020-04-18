@@ -164,16 +164,16 @@ class Robot extends AbstractDevice {
  * @type {{factorySizes: [*, *], robotParams: {jobSize: undefined, workingSpeed: undefined, movingSpeed: undefined}, id: undefined, iconURL: undefined, factoryLocation: {latitude: undefined, longitude: undefined}}}
  */
 Robot.prototype.profile = {
-    "location": {
-        "latitude": 0,
-        "longitude": 0
+    location: {
+        latitude: 0,
+        longitude: 0
     },
-    "changeStatusProb": 0.2,
-    "factorySizes": [100,100],
-    "robotParams": {
-        "movingSpeed": 5,
-        "jobSize": 100,
-        "workingSpeed": 5
+    changeStatusProb: 0.2,
+    factorySizes: [100,100],
+    robotParams: {
+        movingSpeed: 5,
+        jobSize: 100,
+        workingSpeed: 5
     }
 }
 ;
