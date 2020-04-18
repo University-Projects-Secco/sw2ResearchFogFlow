@@ -1,40 +1,50 @@
+/**
+ *@typedef attribute
+ * @type Object
+ * @property {string} type
+ * @property {*} value
+ */
 const log = require('loglevel');
 
 (function() {
 
     function CtxElement2JSONObject(e) {
-        let i;
-        const jsonObj = {};
-        jsonObj.entityId = e.entityId;
+        const jsonObj = {
+            entityId: e.entityId,
+            attributes: {},
+            metadata: {}
+        };
 
-        jsonObj.attributes = {};
-        for(i = 0; e.attributes && i<e.attributes.length; i++) {
-            const attr = e.attributes[i];
-            jsonObj.attributes[attr.name] = {
-                type: attr.type,
-                value: attr.value
-            };
-        }
+        if(e.attributes)
+            e.attributes.forEach(attr =>
+                jsonObj.attributes[attr.name] = {
+                    type: attr.type,
+                    value: attr.value
+                })
 
-        jsonObj.metadata = {};
-        for(i = 0; e.domainMetadata && i<e.domainMetadata.length; i++) {
-            const meta = e.domainMetadata[i];
-            jsonObj.metadata[meta.name] = {
-                type: meta.type,
-                value: meta.value
-            };
-        }
+        if(e.domainMetadata)
+            e.domainMetadata.forEach(meta=>
+                jsonObj.metadata[meta.name] = {
+                    type: meta.type,
+                    value: meta.value
+                })
 
         return jsonObj;
     }
 
+    /**
+     * @param {{entityId: *, attributes: Object.<string,attribute>, metadata: Object.<string,attribute>}} ob
+     * @returns {{entityId: *, attributes: [], domainMetadata: []}}
+     * @constructor
+     */
     function JSONObject2CtxElement(ob) {
         log.debug('convert json object to context element');
-        const contextElement = {};
+        const contextElement = {
+            entityId: ob.entityId,
+            attributes: [],
+            domainMetadata: []
+        };
 
-        contextElement.entityId = ob.entityId;
-
-        contextElement.attributes = [];
         if (ob.attributes) {
             for (let key in ob.attributes) {
                 let attr = ob.attributes[key];
@@ -42,7 +52,6 @@ const log = require('loglevel');
             }
         }
 
-        contextElement.domainMetadata = [];
         if(ob.metadata) {
             for(let key in ob.metadata ) {
                 let meta = ob.metadata[key];
@@ -61,49 +70,28 @@ const log = require('loglevel');
 
         // update context
         NGSI10Client.prototype.updateContext = function updateContext(ctxObj) {
-            let contextElement = JSONObject2CtxElement(ctxObj);
-
-            const updateCtxReq = {};
-            updateCtxReq.contextElements = [];
-            updateCtxReq.contextElements.push(contextElement);
-            updateCtxReq.updateAction = 'UPDATE';
-
-            log.debug(JSON.stringify(updateCtxReq,null,'  '));
-
             return axios({
                 method: 'post',
                 url: this.brokerURL + '/updateContext',
-                data: updateCtxReq
-            }).then(function (response) {
-                if (response.status === 200) {
-                    return response.data;
-                } else {
-                    return null;
+                data: {
+                    contextElements: [JSONObject2CtxElement(ctxObj)],
+                    updateAction: 'UPDATE'
                 }
-            });
+            }).then(response => response.status === 200 ? response.data : null);
         };
 
         // delete context
         NGSI10Client.prototype.deleteContext = function deleteContext(entityId) {
-            const contextElement = {};
-            contextElement.entityId = entityId;
-
-            const updateCtxReq = {};
-            updateCtxReq.contextElements = [];
-            updateCtxReq.contextElements.push(contextElement);
-            updateCtxReq.updateAction = 'DELETE';
-
             return axios({
                 method: 'post',
                 url: this.brokerURL + '/updateContext',
-                data: updateCtxReq
-            }).then(function (response) {
-                if (response.status === 200) {
-                    return response.data;
-                } else {
-                    return null;
+                data: {
+                    contextElement: [{
+                        entityId: entityId
+                    }],
+                    updateAction: 'DELETE'
                 }
-            });
+            }).then(response => response.status === 200 ? response.data : null);
         };
 
         // query context
@@ -113,22 +101,15 @@ const log = require('loglevel');
                 method: 'post',
                 url: this.brokerURL + '/queryContext',
                 data: queryCtxReq
-            }).then(function (response) {
-                if (response.status === 200) {
-                    const objectList = [];
-                    const ctxElements = response.data.contextResponses;
-                    for (var i = 0; ctxElements && i < ctxElements.length; i++) {
-                        log.debug(ctxElements[i].contextElement);
-                        log.debug('===========context element=======');
-                        log.debug(ctxElements[i].contextElement);
-                        const obj = CtxElement2JSONObject(ctxElements[i].contextElement);
-                        objectList.push(obj);
-                    }
-                    return objectList;
-                } else {
-                    return null;
-                }
-            });
+                /**
+                 * @param {{data: {contextResponses: {contextElement}[]}}} response
+                 */
+            }).then(response =>
+                response.status === 200 ?
+                    response.data.contextResponses
+                        .map(e => CtxElement2JSONObject(e.contextElement)) :
+                    null
+            );
         };
 
         // subscribe context
@@ -137,31 +118,18 @@ const log = require('loglevel');
                 method: 'post',
                 url: this.brokerURL + '/subscribeContext',
                 data: subscribeCtxReq
-            }).then(function (response) {
-                if (response.status === 200) {
-                    return response.data.subscribeResponse.subscriptionId;
-                } else {
-                    return null;
-                }
-            });
+            }).then(response => response.status === 200 ? response.data.subscribeResponse.subscriptionId : null);
         };
 
         // unsubscribe context
         NGSI10Client.prototype.unsubscribeContext = function unsubscribeContext(sid) {
-            const unsubscribeCtxReq = {};
-            unsubscribeCtxReq.subscriptionId = sid;
-
             return axios({
                 method: 'post',
                 url: this.brokerURL + '/unsubscribeContext',
-                data: unsubscribeCtxReq
-            }).then(function (response) {
-                if (response.status === 200) {
-                    return response.data;
-                } else {
-                    return null;
+                data: {
+                    subscriptionId: sid
                 }
-            });
+            }).then(response => response.status === 200 ? response.data : null);
         };
 
         return NGSI10Client;
@@ -173,37 +141,30 @@ const log = require('loglevel');
             this.discoveryURL = url;
         };
 
-        NGSI9Client.prototype.findNearbyIoTBroker = function findNearbyIoTBroker(mylocation, num) {
-            const discoveryReq = {};
-            discoveryReq.entities = [{type: 'IoTBroker', isPattern: true}];
-
-            const nearby = {};
-            nearby.latitude = mylocation.latitude;
-            nearby.longitude = mylocation.longitude;
-            nearby.limit = num;
-
-            discoveryReq.restriction = {
-                scopes: [{
-                    scopeType: 'nearby',
-                    scopeValue: nearby
-                }]
-            };
-
-            return this.discoverContextAvailability(discoveryReq).then(function (response) {
-                if (response.errorCode.code === 200) {
-                    const brokers = [];
-                    for (let i in response.contextRegistrationResponses) {
-                        const contextRegistrationResponse = response.contextRegistrationResponses[i];
-                        const providerURL = contextRegistrationResponse.contextRegistration.providingApplication;
-                        if (providerURL !== '') {
-                            brokers.push(providerURL);
+        NGSI9Client.prototype.findNearbyIoTBroker = function findNearbyIoTBroker(my_location, num) {
+            const discoveryReq = {
+                entities: [{type: 'IoTBroker', isPattern: true}],
+                restriction: {
+                    scopes: [{
+                        scopeType: 'nearby',
+                        scopeValue: {
+                            latitude: my_location.latitude,
+                            longitude: my_location.longitude,
+                            limit: num
                         }
-                    }
-                    return brokers;
-                } else {
-                    return null;
+                    }]
                 }
-            });
+            };
+            /**
+             * @param {{contextRegistrationResponses: {contextRegistration: {providingApplication}}[]}} response
+             */
+            return this.discoverContextAvailability(discoveryReq).then(response=>
+                response.errorCode.code === 200?
+                    response.contextRegistrationResponses
+                        .map(response => response.contextRegistration.providingApplication)
+                        .filter(url => url !== ''):
+                    null
+            );
         };
 
         // discover availability
@@ -212,13 +173,7 @@ const log = require('loglevel');
                 method: 'post',
                 url: this.discoveryURL + '/discoverContextAvailability',
                 data: discoverReq
-            }).then(function (response) {
-                if (response.status === 200) {
-                    return response.data;
-                } else {
-                    return null;
-                }
-            });
+            }).then(response=>response.status===200?response.data:null);
         };
 
         return NGSI9Client;

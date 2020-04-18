@@ -1,37 +1,49 @@
 const log = require('loglevel');
+const AbstractDevice = require('./AbstractDevice');
 
 class Robot extends AbstractDevice {
 
+    /**
+     * @type {number}
+     */
     jobProgression = 0;
+    /**
+     * @type {number}
+     */
+    status;
+
+    /**
+     * @type {Readonly<{idle: number, working: number, moving: number}>}
+     */
     static statusEnum = Object.freeze({'idle':0,'working':1,'moving':2});
 
     /**
-     *
      * @param {statusEnum} initialStatus
+     * @param {Robot.profile} profile
      */
     constructor(initialStatus) {
         super();
-        switch (typeof initialStatus) {
-            case "number": this.status = initialStatus; break;
-            case "string": this.status = Robot.statusEnum[initialStatus]; break;
-            default: this.status = Robot.statusEnum.idle;
-        }
-        this.position = [this.profile.factoryLocation.latitude, this.profile.factoryLocation.longitude];
-        this.id = Robot.nextId;
-        Robot.nextId++;
+        this.status=initialStatus?Robot.statusEnum[initialStatus]:Robot.statusEnum.idle;
+        this.position = [this.profile.location.latitude, this.profile.location.longitude];
     };
 
+    /**
+     * @returns {string}
+     */
     getStatus(){
         for(let statusString in Robot.statusEnum)
             // noinspection JSUnfilteredForInLoop
             if(Robot.statusEnum[statusString] === this.status)
                 // noinspection JSUnfilteredForInLoop
                 return statusString;
-
         throw 'Unexpected status index: '+this.status;
 
     }
 
+    /**
+     *
+     * @returns {{latitude, longitude}}
+     */
     getPosition(){
         return {
             latitude: this.position[0],
@@ -39,21 +51,26 @@ class Robot extends AbstractDevice {
         }
     }
 
+    /**
+     * @returns {void}
+     */
     update() {
         switch (this.status) {
             case Robot.statusEnum.moving:
-                this.#move();
+                this._move();
                 break;
             case Robot.statusEnum.idle:
-                this.#idle();
+                this._idle();
                 break;
             case Robot.statusEnum.working:
-                this.#work();
+                this._work();
                 break;
         }
     }
 
-    //OPT: move to a superclass
+    /**
+     * @returns {{entityId: {id: string, type: string, isPattern: boolean}, attributes: $ObjMap<{type: string, value: Object}>, metadata: $ObjMap<{type: string, value: Object}>}}
+     */
     fillAttributes() {
         const attributes = super.fillAttributes();
         attributes.attributes = {
@@ -91,16 +108,21 @@ class Robot extends AbstractDevice {
         return attributes;
     }
 
-
-    #updateStatus(){
-        if(Math.random()<this.profile[`changeStatusProb`]) {
+    /**
+     * @returns {void}
+     */
+    _updateStatus(){
+        if(Math.random()<this.profile.changeStatusProb) {
             const keys = Object.keys(Robot.statusEnum);
             this.status = Robot.statusEnum[keys[Math.floor(Math.random() * keys.length)]];
             log.info('Status changed to '+ this.getStatus())
         }
     }
 
-    #move(){
+    /**
+     * @returns {void}
+     */
+    _move(){
         const movingDirection = Math.floor(Math.random()*this.position.length);
         const speed = this.profile.robotParams.movingSpeed;
         let movingSign;
@@ -114,38 +136,47 @@ class Robot extends AbstractDevice {
 
         log.info('Moved to ' + this.position);
 
-        this.#updateStatus();
+        this._updateStatus();
     }
 
-    #work(){
+    /**
+     * @returns {void}
+     */
+    _work(){
         this.jobProgression += this.profile.robotParams.workingSpeed;
         if(this.jobProgression >= this.profile.robotParams.jobSize) {
             this.jobProgression = 0;
-            this.#updateStatus();
+            this._updateStatus();
         }
         log.info('Working progression: '+this.jobProgression);
     }
 
-    #idle(){
-        this.#updateStatus();
+    /**
+     * @returns {void}
+     */
+    _idle(){
+        this._updateStatus();
     }
 
 }
 
+/**
+ * @type {{factorySizes: [*, *], robotParams: {jobSize: undefined, workingSpeed: undefined, movingSpeed: undefined}, id: undefined, iconURL: undefined, factoryLocation: {latitude: undefined, longitude: undefined}}}
+ */
 Robot.prototype.profile = {
-    id: undefined,
-    iconURL: undefined,
-    factoryLocation: {
-        latitude: undefined,
-        longitude: undefined
+    "location": {
+        "latitude": 0,
+        "longitude": 0
     },
-    factorySizes: [undefined,undefined],
-    robotParams:{
-        movingSpeed: undefined,
-        workingSpeed: undefined,
-        jobSize: undefined
+    "changeStatusProb": 0.2,
+    "factorySizes": [100,100],
+    "robotParams": {
+        "movingSpeed": 5,
+        "jobSize": 100,
+        "workingSpeed": 5
     }
-};
+}
+;
 
 Object.defineProperty(Robot.prototype,'type',{value: 'Robot', writable: false})
 module.exports = Robot;
