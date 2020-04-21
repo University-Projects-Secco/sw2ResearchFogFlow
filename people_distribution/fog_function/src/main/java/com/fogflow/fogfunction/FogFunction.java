@@ -1,70 +1,47 @@
 package com.fogflow.fogfunction;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FogFunction {
-    public static void main(String[] args) {
-        RestHandler restHandler = new RestHandler();
-        restHandler.BrokerURL = "http://192.168.1.4:8070/ngsi10";
-        List<ContextElement> queryResults = restHandler.queryContext(Collections.singletonList(
-                new EntityId("PeopleCounter." + (Integer.parseInt("PeopleCounter.0".split("\\.")[1]) + 0), null, false)),
-                Collections.emptyList());
-
-        String results = queryResults.parallelStream().map(e -> e.entityId.id).collect(Collectors.joining(", "));
-        System.out.println(results);
-
-        ContextObject resultEntity = new ContextObject();
-        resultEntity.id = "PeopleCounter.0".replace("PeopleCounter", "EBoard");
-        resultEntity.type = "EBoard";
-
-        ContextAttribute attr = new ContextAttribute();
-        attr.name = "next";
-        attr.type = "string";
-        attr.value = queryResults.parallelStream().findAny().map(e -> e.entityId.id).orElse("Not found");
-
-        resultEntity.attributes.put("next", attr);
-
-        restHandler.publishResult(resultEntity, false);
-
-    }
-
-    public static void function(ContextObject entity, RestHandler restHandler) {
-        System.out.println(entity.id);
-        System.out.println(entity.type);
-
+    public static void function(@NotNull ContextObject entity, @NotNull RestHandler restHandler) {
         //Collections.singletonList(new Scope.StringQuery(""))
         List<ContextElement> queryResults = restHandler.queryContext(Collections.singletonList(
                 new EntityId("PeopleCounter." + (Integer.parseInt(entity.id.split("\\.")[1]) + 1), null, false)),
                 Collections.emptyList());
 
-        //String results = queryResults.parallelStream().map(e -> e.entityId.id).collect(Collectors.joining(", "));
+        String cmd = queryResults.parallelStream().findAny().map(e -> e.attributes.parallelStream())
+                .flatMap(e -> e.filter(f -> f.name.equals("count")).findAny().map(f -> f.value.toString()))
+                .orElse("Not found");
+        publishCmd(cmd, entity, restHandler);
 
+        String log = queryResults.parallelStream().findAny().map(e -> e.entityId.id).orElse("Not found");
+        publishLog(log, entity, restHandler);
+    }
+
+    private static void publishCmd(@NotNull String value, @NotNull ContextObject entity, @NotNull RestHandler restHandler) {
         ContextObject resultEntity = new ContextObject();
         resultEntity.id = entity.id.replace("PeopleCounter", "EBoard");
         resultEntity.type = "EBoard";
-
         ContextAttribute attr = new ContextAttribute();
         attr.name = "next";
         attr.type = "command";
-        attr.value = queryResults.parallelStream().findAny().map(e -> e.entityId.id).orElse("Not found");
-
+        attr.value = value;
         resultEntity.attributes.put("next", attr);
-
         restHandler.publishResult(resultEntity, true);
+    }
 
-        resultEntity = new ContextObject();
+    private static void publishLog(@NotNull String value, @NotNull ContextObject entity, @NotNull RestHandler restHandler) {
+        ContextObject resultEntity = new ContextObject();
         resultEntity.id = entity.id.replace("PeopleCounter", "EBoard");
         resultEntity.type = "Result";
-
-        attr = new ContextAttribute();
-        attr.name = "next_log";
+        ContextAttribute attr = new ContextAttribute();
+        attr.name = "next";
         attr.type = "string";
-        attr.value = queryResults.parallelStream().findAny().map(e -> e.entityId.id).orElse("Not found");;
-
+        attr.value = value;
         resultEntity.attributes.put("next", attr);
-
         restHandler.publishResult(resultEntity, false);
     }
 }
