@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class FogFunction {
     public static void function(@NotNull ContextObject entity, @NotNull RestHandler restHandler) {
@@ -12,9 +13,11 @@ public class FogFunction {
                 new EntityId("PeopleCounter." + (Integer.parseInt(entity.id.split("\\.")[1]) + 1), null, false)),
                 Collections.emptyList());
 
-        String cmd = queryResults.parallelStream().findAny().map(e -> e.attributes.parallelStream())
+        /*String cmd = queryResults.parallelStream().findAny().map(e -> e.attributes.parallelStream())
                 .flatMap(e -> e.filter(f -> f.name.equals("count")).findAny().map(f -> f.value.toString()))
-                .orElse("Not found");
+                .orElse("Not found");*/
+
+        String cmd = Optional.of(entity.attributes.get("count").value.toString()).orElse("Not found");
         publishCmd(cmd, entity, restHandler);
 
         String log = queryResults.parallelStream().findAny().map(e -> e.entityId.id).orElse("Not found");

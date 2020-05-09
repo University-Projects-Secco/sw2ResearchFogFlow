@@ -7,6 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	. "github.com/smartfog/fogflow/common/config"
+	. "github.com/smartfog/fogflow/common/ngsi"
 )
 
 func main() {

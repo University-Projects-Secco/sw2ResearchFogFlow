@@ -2,6 +2,10 @@ package main
 
 import (
 	"github.com/ant0ine/go-json-rest/rest"
+	"github.com/satori/go.uuid"
+	. "github.com/smartfog/fogflow/common/config"
+	. "github.com/smartfog/fogflow/common/datamodel"
+	. "github.com/smartfog/fogflow/common/ngsi"
 	"net/http"
 	"strconv"
 	"strings"

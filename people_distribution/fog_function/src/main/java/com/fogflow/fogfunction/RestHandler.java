@@ -138,7 +138,7 @@ public class RestHandler {
 
             QueryContextRequest request = new QueryContextRequest();
             request.entities = new ArrayList<>();
-            for (EntityId entityId:entities) {
+            for (EntityId entityId : entities) {
                 request.entities.add(new EntityId(entityId.id, entityId.type, entityId.isPattern));
             }
             request.getScopes().addAll(restrictions);
@@ -156,7 +156,7 @@ public class RestHandler {
             if (result.getBody() != null) {
                 return result.getBody().getContextResponses().parallelStream().map(ContextElementResponse::getContextElement).collect(Collectors.toList());
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new ArrayList<>();
