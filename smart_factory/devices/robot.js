@@ -126,7 +126,7 @@ class Robot extends AbstractDevice {
         const movingDirection = Math.floor(Math.random()*this.position.length);
         const speed = this.profile.robotParams.movingSpeed;
         let movingSign;
-        const sizes = this.profile.factorySizes;
+        const sizes = this.profile.size;
 
         if(this.position[movingDirection] + speed > sizes[movingDirection]) movingSign = -1;
         else if(this.position[movingDirection] - speed < 0) movingSign = 1;
