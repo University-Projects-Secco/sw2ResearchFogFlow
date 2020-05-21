@@ -2,6 +2,10 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/docker images/fog_function/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/docker images/fog_function/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/docker images/fog_function/src/test/java" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/docker images/fog_function/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
