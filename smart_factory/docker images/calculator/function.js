@@ -1,6 +1,13 @@
 var geohash = require('ngeohash');
+const Robot = require('../../devices/robot');
+const Bracelet = require('../../devices/bracelet');
 
 exports.handler = function(contextEntity, publish){
+const robotPosition = Robot.prototype.getPosition();
+const braceletposition = Bracelet.prototype.getPosition();
+
+
+    
     if (contextEntity == null) {
         return;
     } 
