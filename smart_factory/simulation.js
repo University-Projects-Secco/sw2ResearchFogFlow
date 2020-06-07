@@ -22,6 +22,7 @@ const bracelet_profile = JSON.parse(fs.readFileSync(args[2]));
 if(robot_profile){
     Robot.prototype.profile = fact_profile;
     Robot.prototype.profile.robotParams = robot_profile;
+    Robot.prototype.profile.simulation = sim_profile;
 }
 if(bracelet_profile){
     Bracelet.prototype.profile = fact_profile;
@@ -34,6 +35,12 @@ let contextTimer;
 let clockTimer;
 let robot = new Robot(Robot.statusEnum.idle);
 let bracelet = new Bracelet();
+
+
+clockTimer = setInterval(function () {
+    robot.update();
+    bracelet.update();
+},sim_profile['updateClockTime']);
 
 // find out the nearby IoT Broker according to my location
 const discovery = new NGSI.NGSI9Client(sim_profile.discoveryURL);
@@ -49,11 +56,6 @@ discovery.findNearbyIoTBroker(sim_profile.location, 1)
         contextTimer = setInterval(function(){
             updateContext();
         }, sim_profile['updateContextTime']);
-
-        clockTimer = setInterval(function () {
-            robot.update();
-            bracelet.update();
-        },sim_profile['updateClockTime']);
 
         // register my device profile by sending a device update
         registerDevice();

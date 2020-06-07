@@ -19,7 +19,6 @@ class Robot extends AbstractDevice {
 
     /**
      * @param {statusEnum} initialStatus
-     * @param {Robot.profile} profile
      */
     constructor(initialStatus) {
         super();
@@ -31,10 +30,9 @@ class Robot extends AbstractDevice {
      * @returns {string}
      */
     getStatus(){
+
         for(let statusString in Robot.statusEnum)
-            // noinspection JSUnfilteredForInLoop
-            if(Robot.statusEnum[statusString] === this.status)
-                // noinspection JSUnfilteredForInLoop
+            if (Robot.statusEnum[statusString] === this.status)
                 return statusString;
         throw 'Unexpected status index: '+this.status;
 
@@ -112,10 +110,9 @@ class Robot extends AbstractDevice {
      * @returns {void}
      */
     _updateStatus(){
-        if(Math.random()<this.profile.changeStatusProb) {
+        if(Math.random()<this.profile.simulation.changeStatusProb) {
             const keys = Object.keys(Robot.statusEnum);
             this.status = Robot.statusEnum[keys[Math.floor(Math.random() * keys.length)]];
-            log.info('Status changed to '+ this.getStatus())
         }
     }
 
