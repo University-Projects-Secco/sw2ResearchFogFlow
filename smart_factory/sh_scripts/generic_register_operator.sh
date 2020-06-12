@@ -1,8 +1,10 @@
+#!/bin/bash
 #usage: "sh register-operator.sh docker_image_name owner [tag]
 IMAGE=$1;
 OWNER=${2-galaxarum};
 VERSION=${3-latest}
-curl -iX POST \
+echo "trying to register $IMAGE"
+curl -s -iX POST \
           'http://192.168.1.137:8070/ngsi10/updateContext' \
         -H 'Content-Type: application/json' \
         -d "{
@@ -139,3 +141,9 @@ curl -iX POST \
    \"updateAction\": \"UPDATE\"
 }
 "
+if [ $? -eq 0 ];
+then
+  echo 'registered operator $IMAGE'
+else
+  1>&2 echo 'failed to register operator $IMAGE'
+fi
