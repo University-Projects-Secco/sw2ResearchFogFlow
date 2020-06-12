@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/docker images/idle_notifier/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/docker images/idle_notifier/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/docker images/idle_notifier/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/docker images/bracelets/src/main/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/docker images/idle_notifier/target" />
       <excludeFolder url="file://$MODULE_DIR$/docker images/state_detector/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />

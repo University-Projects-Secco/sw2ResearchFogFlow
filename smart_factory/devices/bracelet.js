@@ -3,14 +3,6 @@ const AbstractDevice = require('./AbstractDevice');
 
 class Bracelet extends AbstractDevice {
 
-    /**
-     * @type {number}
-     */
-    jobProgression = 0;
-
-    /**
-     * @param {Bracelet.profile} profile
-     */
     constructor() {
         super();
         this.position = [this.profile.location.latitude, this.profile.location.longitude];
@@ -90,19 +82,6 @@ class Bracelet extends AbstractDevice {
             log.info('movement skipped');
         }
     }
-
-    /**
-     * @returns {void}
-     */
-    _work(){
-        this.jobProgression += this.profile.braceletParams.workingSpeed;
-        if(this.jobProgression >= this.profile.braceletParams.jobSize) {
-            this.jobProgression = 0;
-        }
-        log.info('Working progression: '+this.jobProgression);
-    }
-
-
 }
 
 /**
@@ -115,9 +94,7 @@ Bracelet.prototype.profile = {
     },
     factorySizes: [100,100],
     braceletParams: {
-        movingSpeed: 5,
-        jobSize: 100,
-        workingSpeed: 5
+        movingSpeed: 5
     }
 }
 ;
