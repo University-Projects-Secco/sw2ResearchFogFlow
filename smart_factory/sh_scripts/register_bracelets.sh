@@ -1,2 +1,3 @@
 #!/bin/bash
-sh ./generic_register_operator.sh bracelets
+PORT=${1-4041}
+sh ./generic_register_operator.sh bracelets "$PORT"
