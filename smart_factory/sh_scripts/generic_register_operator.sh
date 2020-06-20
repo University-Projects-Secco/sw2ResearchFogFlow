@@ -1,11 +1,12 @@
 #!/bin/bash
-#usage: "sh register-operator.sh docker_image_name owner [tag]
+#usage: "sh register-operator.sh 4041 docker_image_name owner [tag]
 IMAGE=$1;
-OWNER=${2-galaxarum};
-VERSION=${3-latest}
-echo "trying to register $IMAGE"
-curl -s -iX POST \
-          'http://192.168.1.137:8070/ngsi10/updateContext' \
+PORT=${2-4041}
+OWNER=${3-galaxarum};
+VERSION=${4-latest}
+echo "trying to register $IMAGE on port $PORT"
+curl -iX POST \
+          'http://192.168.1.132:8070/ngsi10/updateContext' \
         -H 'Content-Type: application/json' \
         -d "{
    \"contextElements\": [
@@ -27,7 +28,7 @@ curl -s -iX POST \
                         \"values\":{
                            \"name\":\"service_port\",
                            \"values\":[
-                              \"4041\"
+                              \"$PORT\"
                            ]
                         },
                         \"x\":-425,
@@ -72,7 +73,7 @@ curl -s -iX POST \
                      {
                         \"name\":\"service_port\",
                         \"values\":[
-                           \"4041\"
+                           \"$PORT\"
                         ]
                      }
                   ]
@@ -143,7 +144,7 @@ curl -s -iX POST \
 "
 if [ $? -eq 0 ];
 then
-  echo 'registered operator $IMAGE'
+  echo "registered operator $IMAGE"
 else
-  1>&2 echo 'failed to register operator $IMAGE'
+  1>&2 echo "failed to register operator $IMAGE"
 fi
