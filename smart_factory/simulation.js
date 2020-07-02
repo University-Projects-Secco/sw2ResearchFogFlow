@@ -2,8 +2,6 @@ const NGSI = require('./ngsi/ngsiclient.js');
 const fs = require('fs');
 const Robot = require('./devices/robot.js');
 const Bracelet = require('./devices/bracelet.js');
-let published;
-
 const log = require('loglevel');
 
 log.setLevel("debug",false);
@@ -15,6 +13,13 @@ if(args.length < 1){
     throw 'please specify the device profile';
 }
 
+/**
+ * @type {{
+ * updateContextTime: number,
+ * discoveryURL: string,
+ * location: [number,number]
+ * }}
+ */
 const sim_profile = JSON.parse(fs.readFileSync(args[0]));
 const fact_profile = JSON.parse(fs.readFileSync(args[1]));
 const robot_profile = JSON.parse(fs.readFileSync(args[2]));
@@ -55,31 +60,31 @@ discovery.findNearbyIoTBroker(sim_profile.location, 1)
         // generating data observations periodically
         contextTimer = setInterval(function(){
             updateContext();
-        }, sim_profile['updateContextTime']);
+        }, sim_profile.updateContextTime);
 
         // register my device profile by sending a device update
         registerDevice();
     }
 }).catch(function(error) {
-    log.warn(error);
+    log.error('ERROR: '+error);
 });
 
 // register device with its device profile
-function registerDevice() 
+function registerDevice()
 {
     const ctxObj = robot.fillAttributes();
     const ctxObj2 = bracelet.fillAttributes();
-   
-    ngsi10client.updateContext(ctxObj).then( function(data) {
-        log.debug('ngsi response: '+JSON.stringify(data),null,' ');
-    }).catch(function(error) {
-        log.warn('failed to update context');
+
+    ngsi10client.updateContext(ctxObj).then( function() {
+        log.debug('registered: '+JSON.stringify(ctxObj));
+    }).catch(function() {
+        log.warn('failed to register: '+JSON.stringify(ctxObj));
     });
 
-    ngsi10client.updateContext(ctxObj2).then( function(data) {
-        log.debug('ngsi response: '+JSON.stringify(data),null,' ');
-    }).catch(function(error) {
-        log.warn('failed to update context');
+    ngsi10client.updateContext(ctxObj2).then( function() {
+        log.debug('registered: '+JSON.stringify(ctxObj2));
+    }).catch(function() {
+        log.warn('failed to register: '+JSON.stringify(ctxObj2));
     });
 }
 
@@ -87,41 +92,38 @@ function registerDevice()
 function updateContext()
 {
     const ctxObj = robot.fillAttributes();
-    log.debug('update: '+JSON.stringify(ctxObj,null,'\t'));
-
     const ctxObj2 = bracelet.fillAttributes();
-    log.debug('update: '+JSON.stringify(ctxObj2,null,'\t'));
 
-    ngsi10client.updateContext(ctxObj).then( function(data) {
-        log.debug('ngsi response: '+JSON.stringify(data),null,' ');
-    }).catch(function(error) {
-        log.warn('failed to update context');
+    ngsi10client.updateContext(ctxObj).then( function() {
+        log.debug('updated: '+JSON.stringify(ctxObj),null,' ');
+    }).catch(function() {
+        log.warn('failed to update: '+JSON.stringify(ctxObj));
     });
 
-    ngsi10client.updateContext(ctxObj2).then( function(data) {
-        log.debug('ngsi response: '+JSON.stringify(data),null,' ');
-    }).catch(function(error) {
-        log.warn('failed to update context');
+    ngsi10client.updateContext(ctxObj2).then( function() {
+        log.debug('updated: '+JSON.stringify(ctxObj2),null,' ');
+    }).catch(function() {
+        log.warn('failed to update: '+JSON.stringify(ctxObj2));
     });
 }
 
-process.on('SIGINT', function() 
-{    
+process.on('SIGINT', function()
+{
     if(ngsi10client) {
         clearInterval(contextTimer);
         clearInterval(clockTimer);
-        
+
         // to delete the device
         ngsi10client.deleteContext(robot.getAsEntity()).then( function(data) {
             log.debug('ngsi response: '+JSON.stringify(data,null,' '));
-        }).catch(function(error) {
+        }).catch(function() {
             log.warn('failed to delete context');
         });
-        
+
         // to delete the device
         ngsi10client.deleteContext(bracelet.getAsEntity()).then( function(data) {
             log.debug('ngsi response: '+JSON.stringify(data,null,' '));
-        }).catch(function(error) {
+        }).catch(function() {
             log.warn('failed to delete context');
         });
 
