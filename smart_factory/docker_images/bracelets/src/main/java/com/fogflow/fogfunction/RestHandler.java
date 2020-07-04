@@ -17,8 +17,8 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,13 +32,13 @@ public class RestHandler {
     private void setup() {
         System.out.print("=========test========");
         String jsonText = System.getenv("adminCfg");
-        this.handleInitAdminCfg(jsonText);
+        if(jsonText!=null && !jsonText.isEmpty())
+            this.handleInitAdminCfg(jsonText);
     }
 
     @PostMapping("/admin")
     public ResponseEntity<Void> handleConfig(@RequestBody List<Config> configs) {
         for (Config cfg : configs) {
-            System.out.println(cfg.details.get("command"));
             if (cfg.details.get("command").equalsIgnoreCase("CONNECT_BROKER")) {
                 this.BrokerURL = cfg.details.get("brokerURL");
             } else if (cfg.details.get("command").equalsIgnoreCase("SET_OUTPUTS")) {
@@ -53,7 +53,6 @@ public class RestHandler {
 
         return ResponseEntity.ok().build();
     }
-
 
     public void handleInitAdminCfg(String config) {
         ObjectMapper mapper = new ObjectMapper();
@@ -73,7 +72,7 @@ public class RestHandler {
 
         for (ContextElementResponse response : notify.contextResponses) {
             System.out.println(response.toString());
-            if (response.statusCode.code == 200) {
+            if ( response.statusCode.code == 200 ) {
                 ContextObject contextObj = new ContextObject(response.contextElement);
                 handleEntityObject(contextObj);
             }
@@ -87,11 +86,11 @@ public class RestHandler {
     }
 
     void publishResult(@NotNull ContextObject resultEntity, boolean iot) {
-        if (Objects.equals(resultEntity.id, "")) {
+        if (resultEntity.id.isEmpty()) {
             resultEntity.id = outputEntityId;
         }
 
-        if (Objects.equals(resultEntity.type, "")) {
+        if (resultEntity.type.isEmpty()) {
             resultEntity.type = outputEntityType;
         }
 
@@ -159,4 +158,16 @@ public class RestHandler {
         }
         return new ArrayList<>();
     }
+
+    void publishLog(@NotNull String value) {
+            ContextObject resultEntity = new ContextObject();
+            resultEntity.id = "Log " + new Date().getTime();
+            resultEntity.type = "Log";
+            ContextAttribute attr = new ContextAttribute();
+            attr.name = "text";
+            attr.type = "string";
+            attr.value = value;
+            resultEntity.attributes.put("text", attr);
+            publishResult(resultEntity, false);
+        }
 }
