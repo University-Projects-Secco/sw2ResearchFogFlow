@@ -18,23 +18,13 @@ public class FogFunction {
     public static void function(@NotNull ContextObject entity, @NotNull RestHandler restHandler) {
         final String originalEntityId = entity.id.replace(RESULT_ID_PREFIX,"");
         if(((String)entity.attributes.get(STATUS_ATTRIBUTE).value).equalsIgnoreCase("idle") && ((int)entity.attributes.get(LAST_RESULT_ATTRIBUTE).value)>0){
-            publishLog("IDLE ERROR: "+entity.id.replace(RESULT_ID_PREFIX,""),restHandler);
+            restHandler.publishLog("IDLE ERROR: "+entity.id.replace(RESULT_ID_PREFIX,""));
             final List<ContextObject> robots = restHandler.queryContext(Collections.singletonList(
                     new EntityId(null,ROBOT_TYPE,true)
             ),Collections.emptyList()).stream().map(ContextObject::new).collect(Collectors.toList());
-            robots.forEach(robot->publishLog("position: "+robot.attributes.get(POSITION_ATTRIBUTE).value.getClass().getName(),restHandler));
+            robots.stream()
+                    .map(robot->"position: "+robot.attributes.get(POSITION_ATTRIBUTE).value.getClass().getName())
+                    .forEach(restHandler::publishLog);
         }
-    }
-
-    private static void publishLog(@NotNull String value, @NotNull RestHandler restHandler) {
-        ContextObject resultEntity = new ContextObject();
-        resultEntity.id = "Log "+new Date().toString();
-        resultEntity.type = "Log";
-        ContextAttribute attr = new ContextAttribute();
-        attr.name = "text";
-        attr.type = "string";
-        attr.value = value;
-        resultEntity.attributes.put("text", attr);
-        restHandler.publishResult(resultEntity, false);
     }
 }
