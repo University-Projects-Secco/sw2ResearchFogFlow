@@ -1,0 +1,11 @@
+{
+  "name": "ngsi",
+  "version": "1.0.0",
+  "description": "Ngsi client to connect with fogflow ",
+  "main": "ngsiclient.js",
+  "scripts": {
+    "test": "echo \"I can only suppose everything will be fine\""
+  },
+  "author": "",
+  "license": "ISC"
+}
