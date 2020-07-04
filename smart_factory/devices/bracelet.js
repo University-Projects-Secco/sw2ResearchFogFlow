@@ -97,7 +97,6 @@ Bracelet.prototype.profile = {
         movingSpeed: 5
     }
 }
-;
 
 Object.defineProperty(Bracelet.prototype,'type',{value: 'Bracelet', writable: false})
 module.exports = Bracelet;

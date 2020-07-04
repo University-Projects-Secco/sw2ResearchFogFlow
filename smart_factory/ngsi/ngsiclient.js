@@ -1,11 +1,3 @@
-/**
- *@typedef attribute
- * @type Object
- * @property {string} type
- * @property {*} value
- */
-const log = require('loglevel');
-
 (function() {
 
     function CtxElement2JSONObject(e) {
@@ -38,7 +30,6 @@ const log = require('loglevel');
      * @constructor
      */
     function JSONObject2CtxElement(ob) {
-        log.debug('convert json object to context element');
         const contextElement = {
             entityId: ob.entityId,
             attributes: [],

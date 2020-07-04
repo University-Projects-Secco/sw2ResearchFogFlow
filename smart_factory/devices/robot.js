@@ -173,7 +173,6 @@ Robot.prototype.profile = {
         workingSpeed: 5
     }
 }
-;
 
 Object.defineProperty(Robot.prototype,'type',{value: 'Robot', writable: false})
 module.exports = Robot;
