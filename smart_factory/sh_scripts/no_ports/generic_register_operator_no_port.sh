@@ -1,10 +1,11 @@
 #!/bin/bash
-#usage: "sh register-operator.sh 4041 docker_image_name owner [tag]
+#usage: "sh register-operator.sh docker_image_name 192.168.1.131 4041 owner [tag]
 IMAGE=$1;
-OWNER=${2-galaxarum};
-VERSION=${3-latest}
+IP=${2-localhost}
+OWNER=${3-galaxarum};
+VERSION=${4-latest}
 curl -iX POST \
-          'http://192.168.1.132:8070/ngsi10/updateContext' \
+          "http://$IP:8070/ngsi10/updateContext" \
         -H 'Content-Type: application/json' \
         -d "{
    \"contextElements\": [
