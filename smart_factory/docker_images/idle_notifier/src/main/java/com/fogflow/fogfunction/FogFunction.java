@@ -32,7 +32,7 @@ public class FogFunction {
             ContextMetadata time = new ContextMetadata();
             time.name = "time";
             time.type = "string";
-            time.value = entity.attributes.get(TIME_ATTRIBUTE).value;
+            time.value = new Date(Long.parseLong(entity.attributes.get(TIME_ATTRIBUTE).value.toString()));
             error.attributes.put("description",description);
             error.attributes.put("interval",interval);
             error.domainMetadata.put("time",time);
