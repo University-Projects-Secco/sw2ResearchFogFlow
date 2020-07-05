@@ -36,14 +36,11 @@ public class FogFunction {
         attributes.get(LAST_RESULT_ATTRIBUTE).value = 0;
         if(!queryResults.isEmpty() ){
             final ContextObject lastResult = new ContextObject(queryResults.get(0));
-            if(lastResult.attributes.get(STATUS_ATTRIBUTE).value.equals(entity.attributes.get(STATUS_ATTRIBUTE).value)) {
-                final long newInterval = (Long.parseLong(lastResult.attributes.get(LAST_RESULT_ATTRIBUTE).value.toString()) + //new interval = old interval + new time - old time
+            if(lastResult.attributes.get(STATUS_ATTRIBUTE).value.equals(entity.attributes.get(STATUS_ATTRIBUTE).value))
+                attributes.get(LAST_RESULT_ATTRIBUTE).value =
+                        (Long.parseLong(lastResult.attributes.get(LAST_RESULT_ATTRIBUTE).value.toString()) + //new interval = old interval + new time - old time
                         Long.parseLong(attributes.get(TIME_ATTRIBUTE).value.toString()) -
                         Long.parseLong(lastResult.attributes.get(TIME_ATTRIBUTE).value.toString()));
-                restHandler.publishLog("Last result expected value:" + newInterval);
-                attributes.get(LAST_RESULT_ATTRIBUTE).value = newInterval;
-                restHandler.publishLog("Update time, New value: "+ attributes.get(LAST_RESULT_ATTRIBUTE).value);
-            }
         }
         newResult.attributes = attributes;
         restHandler.publishResult(newResult,false);
