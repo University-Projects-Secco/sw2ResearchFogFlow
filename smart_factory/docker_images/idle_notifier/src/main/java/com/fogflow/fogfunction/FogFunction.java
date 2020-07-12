@@ -12,12 +12,9 @@ public class FogFunction {
     private static final String STATUS_ATTRIBUTE = "status";
     private static final String LAST_RESULT_ATTRIBUTE = "last_interval";
     private static final int ERROR_LIMIT = 3 * 1000;   //ms
-    private static final boolean LOG = false;
     public static void function(@NotNull ContextObject entity, @NotNull RestHandler restHandler) {
-        restHandler.publishLog("Enter idle notifier");
         final String originalEntityId = entity.id.replace(RESULT_ID_PREFIX,"");
         if(((String)entity.attributes.get(STATUS_ATTRIBUTE).value).equalsIgnoreCase("idle") && ((int)entity.attributes.get(LAST_RESULT_ATTRIBUTE).value)>ERROR_LIMIT){
-            restHandler.publishLog("IDLE ERROR: "+entity.id.replace(RESULT_ID_PREFIX,""));
             ContextObject error = new ContextObject();
             error.id = "ERROR: "+originalEntityId;
             error.type = ERROR_TYPE;
