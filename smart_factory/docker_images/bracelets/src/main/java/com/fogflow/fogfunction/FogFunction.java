@@ -8,8 +8,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FogFunction {
-    private static final String RESULT_ID_PREFIX = "Result.statusTime.";
     private static final String ROBOT_TYPE = "Robot";
+    private static final String ERROR_TYPE = "Error";
     private static final double MIN_DISTANCE = 15;
     private static final String POSITION_ATTRIBUTE = "position";
 
@@ -17,15 +17,35 @@ public class FogFunction {
         final List<ContextObject> robots = restHandler.queryContext(Collections.singletonList(
                 new EntityId(null,ROBOT_TYPE,true)
         ),Collections.emptyList()).stream().map(ContextObject::new).collect(Collectors.toList());
-        restHandler.publishLog("#Robots: "+robots.size());
         robots.stream()
                 .filter(robot->distance(entity,robot,restHandler)<MIN_DISTANCE)
-                .forEach(robot->restHandler.publishLog(
-                        "Error: distance not respected. Robot ID: "+robot.id+
-                                ", robot position: "+robot.attributes.get(POSITION_ATTRIBUTE).value+
-                                ", human ID: "+entity.id+
-                                ", human position: "+entity.attributes.get(POSITION_ATTRIBUTE).value
-                ));
+                .forEach(robot->{
+                    final ContextObject error = new ContextObject();
+                    error.id = "ERROR: "+entity.id;
+                    error.type = ERROR_TYPE;
+                    final ContextAttribute description = new ContextAttribute();
+                    description.name = "error";
+                    description.type = "string";
+                    description.value = "Distance not respected. Robot: "+robot.id+". Bracelet: "+entity.id;
+                    final ContextAttribute robot_position = new ContextAttribute();
+                    robot_position.name = "robot_position";
+                    robot_position.type = "point";
+                    robot_position.value = robot.attributes.get(POSITION_ATTRIBUTE).value;
+                    final ContextAttribute bracet_position = new ContextAttribute();
+                    bracet_position.name = "bracelet_position";
+                    bracet_position.type = "point";
+                    bracet_position.value = entity.attributes.get(POSITION_ATTRIBUTE).value;
+                    final ContextMetadata time = new ContextMetadata();
+                    time.name = "time";
+                    time.type = "string";
+                    time.value = new Date().toString();
+
+                    error.attributes.put("description",description);
+                    error.attributes.put("robot_position",robot_position);
+                    error.attributes.put("bracelet_position",bracet_position);
+                    error.domainMetadata.put("time",time);
+                    restHandler.publishResult(error,false);
+                });
     }
 
     private static double distance(ContextObject bracelet, ContextObject robot, RestHandler restHandler){
