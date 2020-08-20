@@ -3,8 +3,8 @@
 IMAGE=$1;
 TYPE=$2;
 IP=${3-localhost}
-echo "Registering function $IMAGE with input $TYPE to address $IP"
 curl -iX POST "http://$IP:8070/ngsi10/updateContext" \
+      -o /dev/null -s\
         -H 'Content-Type: application/json' \
         -d "{
   \"contextElements\": [
