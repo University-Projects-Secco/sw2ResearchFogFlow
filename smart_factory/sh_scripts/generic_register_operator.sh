@@ -5,6 +5,7 @@ IP=${2-localhost}
 OWNER=${3-galaxarum};
 VERSION=${4-latest}
 curl -iX POST \
+      -o /dev/null -s\
           "http://$IP:8070/ngsi10/updateContext" \
         -H 'Content-Type: application/json' \
         -d "{
