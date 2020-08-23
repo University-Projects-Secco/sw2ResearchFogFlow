@@ -39,6 +39,7 @@ public class RestHandler {
 
     @PostMapping("/admin")
     public ResponseEntity<Void> handleConfig(@RequestBody List<Config> configs) {
+        publishLog("handleConfig executed!");
         for (Config cfg : configs) {
             if (cfg.details.get("command").equalsIgnoreCase("CONNECT_BROKER")) {
                 this.BrokerURL = cfg.details.get("brokerURL");
