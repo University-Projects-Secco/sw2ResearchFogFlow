@@ -1,14 +1,41 @@
 #!/bin/bash
-#usage: "sh register-operator.sh docker_image_name 192.168.1.131 4041 owner [tag]
-IMAGE=$1;
-IP=${2-localhost}
-OWNER=${3-galaxarum};
-VERSION=${4-latest}
+
+function usage() {
+  echo "Command options are:"
+  echo "-i image name"
+  echo "-o owner of the docker image"
+  echo "[-a ip address of fogflow component. Default is localhost]"
+  echo "[-v version of the docker image. Default is LATEST]"
+  echo "[-s enables silent output]"
+}
+
+IP=localhost
+VERSION=latest
+while getopts i:a:o:v:s option; do #parse input options
+  case "${option}" in
+  i) IMAGE=${OPTARG} ;;
+  a) IP=${OPTARG} ;;
+  o) OWNER=${OPTARG} ;;
+  v) VERSION=${OPTARG} ;;
+  s) SILENT=true ;;
+  \?) exit 1;;
+  *)
+    echo "invalid option: ${option}->${OPTARG}. "
+    usage
+    ;;
+  esac
+done
+
+if [ -z "${IMAGE}" ]; then echo "Missing image name"; usage; exit 1;
+elif [ -z "${OWNER}" ]; then echo "Missing image owner"; usage; exit 1;
+fi
+
 curl -iX POST \
-      -o /dev/null -s\
-          "http://$IP:8070/ngsi10/updateContext" \
-        -H 'Content-Type: application/json' \
-        -d "{
+  "http://$IP:8070/ngsi10/updateContext" \
+  -H 'Content-Type: application/json' \
+  ${SILENT:+'-o /dev/null'} \
+  ${SILENT:+'-s'} \
+  -d "{
    \"contextElements\": [
       {
          \"entityId\":{
@@ -108,9 +135,8 @@ curl -iX POST \
    \"updateAction\": \"UPDATE\"
 }
 "
-if [ $? -eq 0 ];
-then
+if [ $? -eq 0 ]; then
   echo "registered operator $IMAGE"
 else
-  1>&2 echo "failed to register operator $IMAGE"
+  echo 1>&2 "failed to register operator $IMAGE"
 fi
