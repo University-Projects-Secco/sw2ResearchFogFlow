@@ -1,10 +1,35 @@
 #!/bin/bash
-#usage: "sh register-function.sh docker-image-name input-type 192.168.1.131
-IMAGE=$1;
-TYPE=$2;
-IP=${3-localhost}
+
+function usage() {
+  echo "Command options are:"
+  echo "-i image name"
+  echo "-t type of input entities"
+  echo "[-a ip address of fogflow component. Default is localhost]"
+  echo "[-s enables silent output]"
+}
+
+IP=localhost
+while getopts i:a:t:s option; do #parse input options
+  case "${option}" in
+  i) IMAGE=${OPTARG} ;;
+  a) IP=${OPTARG} ;;
+  t) TYPE=${OPTARG} ;;
+  s) SILENT=true ;;
+  \?) exit 1;;
+  *)
+    echo "invalid option: ${option}->${OPTARG}. "
+    usage
+    ;;
+  esac
+done
+
+if [ -z "${IMAGE}" ]; then echo "Missing image name"; usage; exit 1;
+elif [ -z "${TYPE}" ]; then echo "Missing image owner"; usage; exit 1;
+fi
+
 curl -iX POST "http://$IP:8070/ngsi10/updateContext" \
-      -o /dev/null -s\
+  ${SILENT:+'-o /dev/null'} \
+  ${SILENT:+'-s'} \
         -H 'Content-Type: application/json' \
         -d "{
   \"contextElements\": [
