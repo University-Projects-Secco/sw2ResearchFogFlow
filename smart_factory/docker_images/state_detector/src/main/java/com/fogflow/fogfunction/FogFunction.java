@@ -12,6 +12,7 @@ public class FogFunction {
     private static final String STATUS_ATTRIBUTE = "status";
     private static final String LAST_RESULT_ATTRIBUTE = "last_interval";
     public static void function(@NotNull ContextObject entity, @NotNull RestHandler restHandler) {
+        restHandler.publishLog("Entered state_detector");
         final String id = RESULT_ID_PREFIX + entity.id;
         List<ContextElement> queryResults = restHandler.queryContext(Collections.singletonList(
                 new EntityId( id , RESULT_TYPE,true)),

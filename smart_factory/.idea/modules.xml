@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/docker_images/bracelets/bracelets.iml" filepath="$PROJECT_DIR$/docker_images/bracelets/bracelets.iml" />
-      <module fileurl="file://$PROJECT_DIR$/docker_images/idle_notifier/idle.iml" filepath="$PROJECT_DIR$/docker_images/idle_notifier/idle.iml" />
-      <module fileurl="file://$PROJECT_DIR$/manual_trigger/manual_trigger.iml" filepath="$PROJECT_DIR$/manual_trigger/manual_trigger.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sh_scripts/sh_scripts.iml" filepath="$PROJECT_DIR$/sh_scripts/sh_scripts.iml" />
-      <module fileurl="file://$PROJECT_DIR$/docker_images/state_detector/status.iml" filepath="$PROJECT_DIR$/docker_images/state_detector/status.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/smart_factory.iml" filepath="$PROJECT_DIR$/.idea/smart_factory.iml" />
     </modules>
   </component>
 </project>

@@ -2,33 +2,11 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/docker images/state_detector/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/docker images/state_detector/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/docker images/state_detector/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/docker images/idle_notifier/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/docker images/idle_notifier/src/main/resources" type="java-resource" />
-      <sourceFolder url="file://$MODULE_DIR$/docker images/idle_notifier/src/test/java" isTestSource="true" />
-      <sourceFolder url="file://$MODULE_DIR$/docker images/bracelets/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/docker_images/bracelets/src/main/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/docker_images/state_detector/src/main/java" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/docker images/idle_notifier/target" />
-      <excludeFolder url="file://$MODULE_DIR$/docker images/state_detector/target" />
-      <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/19.0.0/annotations-19.0.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="Maven: org.springframework:spring-web:5.0.8.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.3.2" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.9.6" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.9.6" level="project" />
   </component>
 </module>
