@@ -7,23 +7,27 @@ const log = require('loglevel');
 log.setLevel("debug",false);
 
 // read device profile from the configuration file
-const args = process.argv.slice(2);
-if(args.length < 1){
-    log.error('please specify the device profile');
-    throw 'please specify the device profile';
+const args = process.argv.slice(4);
+
+
+switch (args.length){
+    case 0:
+        args.push('simulation_profile.json')
+    case 1:
+        args.push('factory_profile.json')
+    case 2:
+        args.push('robot_profile.json')
+    case 3:
+        args.push('bracelet_profile.json')
+
+
 }
 
-/**
- * @type {{
- * updateContextTime: number,
- * discoveryURL: string,
- * location: [number,number]
- * }}
- */
 const sim_profile = JSON.parse(fs.readFileSync(args[0]));
 const fact_profile = JSON.parse(fs.readFileSync(args[1]));
 const robot_profile = JSON.parse(fs.readFileSync(args[2]));
-const bracelet_profile = JSON.parse(fs.readFileSync(args[2]));
+const bracelet_profile = JSON.parse(fs.readFileSync(args[3]));
+
 if(robot_profile){
     Robot.prototype.profile = fact_profile;
     Robot.prototype.profile.robotParams = robot_profile;
