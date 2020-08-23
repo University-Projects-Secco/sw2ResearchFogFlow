@@ -61,11 +61,8 @@ function register_topology() {
     echo "registering topology"
     echo "$LINE_SEPARATOR"
   fi
-  return "$(curl -iX POST "http://$IP:8070/ngsi10/updateContext" \
-            "$(if [ "$SILENT" == false ]; then echo "-o /dev/null"; fi)" \
-            "$(if [ "$SILENT" == false ]; then echo "-s"; fi)" \
-            -H 'Content-Type: application/json' \
-            -d @topology.json)"
+  ./register_topology.sh -a "$IP" "$(if [ "$SILENT" == true ]; then echo "-s";fi )"
+  return $?
 }
 
 getIp
