@@ -157,9 +157,11 @@ curl -iX POST "http://$IP:8070/ngsi10/updateContext" \
   ],
   \"updateAction\": \"UPDATE\"
 }"
-if [ $? -eq 0 ];
+RETURN=$?
+if [ "$RETURN" -eq 0 ];
 then
   echo "registered function $IMAGE"
 else
   1>&2 echo "failed to register function $IMAGE"
 fi
+exit $RETURN

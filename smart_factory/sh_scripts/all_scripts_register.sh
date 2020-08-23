@@ -2,6 +2,8 @@
 IP=${1-192.168.1.131}
 IMAGES=(measure_robot_status_time_js detect_idle_js bracelets_js)
 TYPES=(Robot Result Bracelet)
+SILENT=false
+LINE_SEPARATOR='---------------------'
 if [[ "${#IMAGES[@]}" != "${#TYPES[@]}" ]]; then echo "invalid configuration arrays"; exit 1; fi
 
 while getopts s option  #parse input options
@@ -22,12 +24,17 @@ function getIp() {
       break
     fi
   done
+  if [ "$SILENT" == false ]; then echo "fogflow ip: $IP"; fi
 }
 
 function register_all_operators() {
-  if [ "$SILENT" == false ]; then echo "registering operators"; fi
+  if [ "$SILENT" == false ]; then
+    echo "$LINE_SEPARATOR"
+    echo "registering operators"
+    echo "$LINE_SEPARATOR"
+  fi
   for (( i = 0; i < ${#IMAGES[@]}; i++ )); do
-      if ./generic_register_operator.sh -i "${IMAGES[i]}" -a "$IP" -o galaxarum ${SILENT:+-s}
+      if ./generic_register_operator.sh -i "${IMAGES[i]}" -a "$IP" -o galaxarum "$(if [ "$SILENT" == true ]; then echo "-s";fi )"
       then continue
       else return 1
     fi
@@ -35,9 +42,13 @@ function register_all_operators() {
 }
 
 function register_all_functions() {
-  if [ "$SILENT" == false ]; then echo "registering functions"; fi
+  if [ "$SILENT" == false ]; then
+    echo "$LINE_SEPARATOR"
+    echo "registering functions"
+    echo "$LINE_SEPARATOR"
+  fi
   for (( i = 0; i < ${#IMAGES[@]}; i++ )); do
-      if ./generic_register_function.sh -i "${IMAGES[i]}" -t "${TYPES[i]}" -a "$IP" ${SILENT:+-s}
+      if ./generic_register_function.sh -i "${IMAGES[i]}" -t "${TYPES[i]}" -a "$IP" "$(if [ "$SILENT" == true ]; then echo "-s";fi )"
       then continue
       else return 1
     fi
@@ -45,13 +56,61 @@ function register_all_functions() {
 }
 
 function register_topology() {
+  if [ "$SILENT" == false ]; then
+    echo "$LINE_SEPARATOR"
+    echo "registering topology"
+    echo "$LINE_SEPARATOR"
+  fi
   return "$(curl -iX POST "http://$IP:8070/ngsi10/updateContext" \
-            -o /dev/null -s\
+            "$(if [ "$SILENT" == false ]; then echo "-o /dev/null"; fi)" \
+            "$(if [ "$SILENT" == false ]; then echo "-s"; fi)" \
             -H 'Content-Type: application/json' \
             -d @topology.json)"
 }
 
 getIp
-if register_all_operators && [ "$SILENT" == false ]; then echo 'all operators registered'; elif [ "$SILENT" == true ]; then echo 'error registering operators'; exit 1; fi
-if register_all_functions && [ "$SILENT" == false ]; then echo 'all functions registered'; elif [ "$SILENT" == true ]; then echo 'error registering functions'; exit 1; fi
-if register_topology && [ "$SILENT" == false ]; then echo 'topology registered'; elif [ "$SILENT" == true ]; then echo 'error registering topology'; exit 1; fi
+if register_all_operators
+then
+  if [ "$SILENT" == false ]
+  then
+    echo "$LINE_SEPARATOR"
+    echo 'all operators registered'
+    echo "$LINE_SEPARATOR";
+  fi
+elif [ "$SILENT" == false ]
+then
+  echo "$LINE_SEPARATOR"
+  echo 'error registering operators'
+  echo "$LINE_SEPARATOR"
+  exit 1
+fi
+if register_all_functions
+then
+  if [ "$SILENT" == false ]
+  then
+    echo "$LINE_SEPARATOR"
+    echo 'all functions registered'
+    echo "$LINE_SEPARATOR"
+  fi
+elif [ "$SILENT" == false ]
+then
+  echo "$LINE_SEPARATOR"
+  echo 'error registering functions'
+  echo "$LINE_SEPARATOR"
+  exit 1
+fi
+if register_topology
+then
+ if [ "$SILENT" == false ]
+ then
+  echo "$LINE_SEPARATOR"
+   echo 'topology registered'
+  echo "$LINE_SEPARATOR"
+ fi
+elif [ "$SILENT" == false ]
+then
+  echo "$LINE_SEPARATOR"
+  echo 'error registering topology'
+  echo "$LINE_SEPARATOR"
+  exit 1
+fi
