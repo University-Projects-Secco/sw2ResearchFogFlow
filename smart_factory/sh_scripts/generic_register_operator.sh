@@ -135,8 +135,10 @@ curl -iX POST \
    \"updateAction\": \"UPDATE\"
 }
 "
-if [ $? -eq 0 ]; then
+RETURN=$?
+if [ "$RETURN" -eq 0 ]; then
   echo "registered operator $IMAGE"
 else
   echo 1>&2 "failed to register operator $IMAGE"
 fi
+exit "$RETURN"
