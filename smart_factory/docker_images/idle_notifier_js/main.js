@@ -3,6 +3,7 @@
 const NGSIClient = require('./ngsi/ngsiclient.js');
 const NGSIAgent = require('./ngsi/ngsiagent.js');
 const fogfunction = require('./function.js');
+const LOG = false;
 
 var ngsi10client = null;
 var brokerURL;
@@ -175,27 +176,29 @@ function publish(ctxUpdate)
 }
 
 function log(msg){
-	const time  = new Date().toISOString()
-	const updateEntity = {
-		entityId: {
-			id: "Log." + time,
-			type: 'Log',
-			isPattern: false
-		},
-		attributes: {
-			message: {
-				type: 'string',
-				value: msg
-			}
-		},
-		metadata: {
-			time: {
-				type: 'string',
-				value: time
+	if(LOG) {
+		const time = new Date().toISOString()
+		const updateEntity = {
+			entityId: {
+				id: "Log." + time,
+				type: 'Log',
+				isPattern: false
+			},
+			attributes: {
+				message: {
+					type: 'string',
+					value: msg
+				}
+			},
+			metadata: {
+				time: {
+					type: 'string',
+					value: time
+				}
 			}
 		}
+		publish(updateEntity);
 	}
-	publish(updateEntity);
 }
 
 // handle the received results
