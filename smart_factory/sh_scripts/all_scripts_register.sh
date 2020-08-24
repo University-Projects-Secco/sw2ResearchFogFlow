@@ -81,6 +81,7 @@ then
   echo "$LINE_SEPARATOR"
   exit 1
 fi
+
 if register_all_functions
 then
   if [ "$SILENT" == false ]

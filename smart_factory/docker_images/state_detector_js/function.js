@@ -1,3 +1,5 @@
+const RANDOM_CONSTANT = 0
+
 exports.handler = function(contextEntity, publish, query, subscribe,log)
 {
 
@@ -7,6 +9,7 @@ exports.handler = function(contextEntity, publish, query, subscribe,log)
 
 	query([{id:id, isPattern: false}],
         function (entityList){
+	    log('measure status: enter query callback')
 	        if(entityList.length>1){
                 log('Too many results for one entity!')
                 return
@@ -31,6 +34,8 @@ exports.handler = function(contextEntity, publish, query, subscribe,log)
                 }
             }
 
+            log('measure status: created response')
+
 	        if (entityList.length===1){
 	            const prevResult = entityList[0]
                 newResult.attributes.last_interval.value =
@@ -39,6 +44,7 @@ exports.handler = function(contextEntity, publish, query, subscribe,log)
                     prevResult.attributes.time.value
             }
 
+	        log('measure status: publishing result')
 	        publish(newResult)
         })
 };

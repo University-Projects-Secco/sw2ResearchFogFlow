@@ -1,7 +1,7 @@
 {
     "discoveryURL":"http://192.168.43.155/ngsi9",
     "iconURL": "/img/shop.png",
-    "changeStatusProb": 0.2,
+    "changeStatusProb": 0,
     "updateClockTime": 500,
     "updateContextTime": 2000
 }
