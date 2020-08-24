@@ -97,6 +97,7 @@ then
   echo "$LINE_SEPARATOR"
   exit 1
 fi
+
 if register_topology
 then
  if [ "$SILENT" == false ]
