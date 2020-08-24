@@ -42,7 +42,7 @@ sim_profile.location = fact_profile.location;
 let ngsi10client;
 let contextTimer;
 let clockTimer;
-let robot = new Robot(Robot.statusEnum.idle);
+let robot = new Robot();
 let bracelet = new Bracelet();
 
 

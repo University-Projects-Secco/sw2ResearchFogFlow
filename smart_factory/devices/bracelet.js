@@ -30,8 +30,8 @@ class Bracelet extends AbstractDevice {
      * @returns {{entityId: {id: string, type: string, isPattern: boolean}, attributes: $ObjMap<{type: string, value: Object}>, metadata: $ObjMap<{type: string, value: Object}>}}
      */
     fillAttributes() {
-        const attributes = super.fillAttributes();
-        attributes.attributes = {
+        const contextEntity = super.fillAttributes();
+        contextEntity.attributes = {
             position: {
                 type: 'point',
                 value: this.getPosition()
@@ -45,7 +45,7 @@ class Bracelet extends AbstractDevice {
                 value: this.profile.iconURL
             }
         }
-        attributes.metadata = {
+        contextEntity.metadata = {
             location: {
                 type: 'point',
                 value: this.profile.location
@@ -59,7 +59,7 @@ class Bracelet extends AbstractDevice {
                 value: Date.now()
             }
         };
-        return attributes;
+        return contextEntity;
     }
 
     /**

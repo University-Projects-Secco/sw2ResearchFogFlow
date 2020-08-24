@@ -17,12 +17,9 @@ class Robot extends AbstractDevice {
      */
     static statusEnum = Object.freeze({'idle':0,'working':1,'moving':2});
 
-    /**
-     * @param {statusEnum} initialStatus
-     */
-    constructor(initialStatus) {
+    constructor() {
         super();
-        this.status=initialStatus?Robot.statusEnum[initialStatus]:Robot.statusEnum.idle;
+        this.status=Robot.statusEnum.idle;
         this.position = [this.profile.location.latitude, this.profile.location.longitude];
     };
 
@@ -70,8 +67,8 @@ class Robot extends AbstractDevice {
      * @returns {{entityId: {id: string, type: string, isPattern: boolean}, attributes: $ObjMap<{type: string, value: Object}>, metadata: $ObjMap<{type: string, value: Object}>}}
      */
     fillAttributes() {
-        const attributes = super.fillAttributes();
-        attributes.attributes = {
+        const contextEntity = super.fillAttributes();
+        contextEntity.attributes = {
             status: {
                 type: 'string',
                 value: this.getStatus()
@@ -89,7 +86,7 @@ class Robot extends AbstractDevice {
                 value: this.profile.iconURL
             }
         }
-        attributes.metadata = {
+        contextEntity.metadata = {
             location: {
                 type: 'point',
                 value: this.profile.location
@@ -103,7 +100,7 @@ class Robot extends AbstractDevice {
                 value: Date.now()
             }
         };
-        return attributes;
+        return contextEntity;
     }
 
     /**

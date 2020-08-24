@@ -27,8 +27,8 @@ curl -iX POST "http://$IP:8070/ngsi10/updateContext" \
 RETURN=$?
 if [ "$RETURN" -eq 0 ];
 then
-  echo "registered function $IMAGE"
+  echo "registered topology"
 else
-  1>&2 echo "failed to register function $IMAGE"
+  1>&2 echo "failed to register topology"
 fi
 exit $RETURN
