@@ -5,9 +5,16 @@ exports.handler = function(contextEntity, publish, query, subscribe, log)
 
     log("enter bracelets")
 
-    query([{type: 'Robot', isPattern: true}],
+    query({
+            entities: [
+                {
+                    type: 'Robot',
+                    isPattern: true
+                }
+            ]
+        },
         function (entityList){
-        const distances = new Map()
+            const distances = new Map()
             entityList.forEach(robot=>distances.set(robot,distance(robot,contextEntity)))
             entityList.filter(robot=>distances.get(robot)<MIN_DISTANCE)
                 .forEach(robot=>publish({

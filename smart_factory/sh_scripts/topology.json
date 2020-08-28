@@ -59,6 +59,20 @@
                 "y":200
               },
               {
+                "id": 8,
+                "module": null,
+                "type": "Task",
+                "values": {
+                  "name": "Counter",
+                  "operator": "counter_js",
+                  "outputs": [
+                    "Count"
+                  ]
+                },
+                "x":1000,
+                "y":100
+              },
+              {
                 "id":4,
                 "module":null,
                 "type":"Shuffle",
@@ -90,11 +104,11 @@
                 "type":"EntityStream",
                 "values":{
                   "groupby":"EntityID",
-                  "scoped":true,
                   "selectedattributes":[
                     "all"
                   ],
-                  "selectedtype":"Robot"
+                  "selectedtype":"Robot",
+                  "scoped": true
                 },
                 "x":-200,
                 "y":0
@@ -193,6 +207,19 @@
                 ],
                 "connector2":[
                   "in",
+                  "input"
+                ],
+                "id":6
+              },
+              {
+                "block1":5,
+                "block2":8,
+                "connector1":[
+                  "stream",
+                  "output"
+                ],
+                "connector2":[
+                  "streams",
                   "input"
                 ],
                 "id":6
