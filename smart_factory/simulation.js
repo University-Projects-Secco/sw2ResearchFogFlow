@@ -14,7 +14,7 @@ switch (args.length){
     case 0:
         args.push('simulation_profile.json')
     case 1:
-        args.push('factory_profile.json')
+        args.push('factory_profile_milano.json')
     case 2:
         args.push('robot_profile.json')
     case 3:

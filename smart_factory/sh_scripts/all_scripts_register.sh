@@ -1,7 +1,7 @@
 #!/bin/bash
 IP=${1-192.168.1.131}
-IMAGES=(measure_robot_status_time_js detect_idle_js bracelets_js)
-TYPES=(Robot Result Bracelet)
+IMAGES=(measure_robot_status_time_js detect_idle_js bracelets_js counter_js)
+TYPES=(Robot Result Bracelet Error)
 SILENT=false
 LINE_SEPARATOR='---------------------'
 if [[ "${#IMAGES[@]}" != "${#TYPES[@]}" ]]; then echo "invalid configuration arrays"; exit 1; fi
