@@ -1,4 +1,6 @@
-docker stop metricbeat && docker rm $_
-docker stop edgebroker && docker rm $_
-docker stop edgeworker && docker rm $_
-yes | docker container prune
+docker stop metricbeat_milano
+docker stop edgebroker_milano
+docker stop edgeworker_milano
+docker rm metricbeat_milano
+docker rm edgebroker_milano
+docker rm edgeworker_milano
