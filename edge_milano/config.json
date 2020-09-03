@@ -1,6 +1,6 @@
 {
     "coreservice_ip": "192.168.1.131",   
-    "external_hostip": "172.17.0.1",         
+    "external_hostip": "127.0.10.1",         
     "internal_hostip": "172.17.0.1",  
     "physical_location":{
         "longitude": 9.1859243,
@@ -17,7 +17,7 @@
         "http_port": 80           
     },
     "broker": {
-        "http_port": 8060
+        "http_port": 8070
     },     
     "worker": {
         "container_autoremove": false,
