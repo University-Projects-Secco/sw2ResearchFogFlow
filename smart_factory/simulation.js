@@ -53,7 +53,7 @@ clockTimer = setInterval(function () {
 
 // find out the nearby IoT Broker according to my location
 const discovery = new NGSI.NGSI9Client(sim_profile.discoveryURL);
-discovery.findNearbyIoTBroker(sim_profile.location, 1)
+discovery.findNearbyIoTBroker(fact_profile.location, 3)
     .then( function(brokers) {
     log.info('-------nearbybroker----------');
     log.info(brokers);

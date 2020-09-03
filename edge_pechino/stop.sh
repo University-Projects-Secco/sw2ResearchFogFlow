@@ -1,0 +1,6 @@
+docker stop metricbeat_pechino
+docker stop edgebroker_pechino
+docker stop edgeworker_pechino
+docker rm metricbeat_pechino
+docker rm edgebroker_pechino
+docker rm edgeworker_pechino
